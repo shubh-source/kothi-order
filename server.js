@@ -346,11 +346,12 @@ app.get('/api/super-stats', authMiddleware, async (req, res) => {
 async function freeTableIfNoActiveOrders(table_no) {
     // A table is active if there are any orders for this table that are NOT (served AND paid)
     const active = await allQuery(`
-        SELECT COUNT(*) as count FROM orders 
+        SELECT COUNT(*) as cnt FROM orders 
         WHERE table_no = ? AND (order_status != 'served' OR payment_status != 'paid')
     `, [table_no]);
 
-    if (active[0].count === 0) {
+    const cnt = parseInt(active[0].cnt || active[0]['count'] || 0);
+    if (cnt === 0) {
         await runQuery(`UPDATE tables_status SET status = 'free' WHERE table_no = ?`, [table_no]);
         io.emit('table_update', { table_no, status: 'free' });
     }
@@ -374,10 +375,12 @@ app.get('/api/users', authMiddleware, async (req, res) => {
         // Let's also attach total spend and orders per user. We can do complex join, or fetch simple.
         // For simplicity right now, just aggregate on DB:
         const userStats = await allQuery(`
-            SELECT u.*, COUNT(o.id) as total_orders, IFNULL(SUM(o.total_amount), 0) as total_spent
+            SELECT u.phone, u.name, u.created_at,
+                   COUNT(o.id) as total_orders,
+                   COALESCE(SUM(o.total_amount), 0) as total_spent
             FROM users u
             LEFT JOIN orders o ON u.phone = o.phone
-            GROUP BY u.id
+            GROUP BY u.phone, u.name, u.created_at
             ORDER BY u.created_at DESC
         `);
         res.json(userStats);

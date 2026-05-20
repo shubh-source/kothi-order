@@ -280,8 +280,8 @@
         document.getElementById('st-pend').innerText = `₹${pend}`;
         document.getElementById('st-tab').innerText = occ;
 
-        // Needs Attention Table
-        const attn = globalOrders.filter(o => o.order_status === 'ready' || (o.order_status === 'served' && o.payment_status === 'pending'));
+        // Needs Attention: any order that is not fully done (served + paid)
+        const attn = globalOrders.filter(o => !(o.order_status === 'served' && o.payment_status === 'paid'));
         document.getElementById('dash-action-body').innerHTML = attn.map(o => `
             <tr>
                 <td><b>${o.id}</b></td>
