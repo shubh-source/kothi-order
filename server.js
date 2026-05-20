@@ -357,6 +357,17 @@ async function freeTableIfNoActiveOrders(table_no) {
     }
 }
 
+// --- Startup: Free any stuck occupied tables ---
+setTimeout(async () => {
+    try {
+        const stuckTables = await allQuery(`SELECT DISTINCT table_no FROM tables_status WHERE status = 'occupied'`);
+        for (const t of stuckTables) {
+            await freeTableIfNoActiveOrders(t.table_no);
+        }
+        console.log('Startup table cleanup done.');
+    } catch(e) { console.error('Startup cleanup error:', e.message); }
+}, 1000);
+
 // 7. Tables: Get All
 app.get('/api/tables', authMiddleware, async (req, res) => {
     try {
