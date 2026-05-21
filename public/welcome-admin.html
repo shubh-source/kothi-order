@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | Rajasthani Sweets & Cafe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            font-family: 'Inter', sans-serif;
+            background: #0f0f12;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        /* Left Side - Visual Panel */
+        .visual-panel {
+            flex: 1;
+            background: linear-gradient(160deg, #1a0a0c 0%, #2d0a0f 40%, #0f0f12 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .visual-panel::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(188,17,30,0.15), transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: breathe 4s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+        }
+
+        .visual-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .v-logo {
+            width: 90px;
+            height: 90px;
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 0 auto 28px;
+            box-shadow: 0 8px 32px rgba(188,17,30,0.3);
+            border: 2px solid rgba(218,165,32,0.3);
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .v-logo img { width: 100%; height: 100%; object-fit: cover; }
+
+        .v-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff, #daa520);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .v-subtitle {
+            font-size: 13px;
+            color: #6b6560;
+            margin-bottom: 48px;
+        }
+
+        /* Stats Row */
+        .stats-row {
+            display: flex;
+            gap: 40px;
+            animation: fadeIn 2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-num {
+            font-size: 28px;
+            font-weight: 800;
+            color: #bc111e;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #555;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* Grid lines decoration */
+        .grid-bg {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        /* Right Side - Login Form */
+        .login-panel {
+            width: 480px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+            background: #141418;
+            border-left: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 40px;
+            width: 100%;
+        }
+
+        .login-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(188,17,30,0.15);
+            border: 1px solid rgba(188,17,30,0.2);
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #e85d68;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .login-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .login-desc {
+            font-size: 13px;
+            color: #6b6560;
+        }
+
+        /* Form */
+        .form-group {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #8a857f;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px 18px;
+            background: #1c1c22;
+            border: 1px solid #2a2a32;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            border-color: #bc111e;
+            box-shadow: 0 0 0 3px rgba(188,17,30,0.15);
+        }
+
+        .form-input::placeholder {
+            color: #3a3a44;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 17px;
+            background: linear-gradient(135deg, #bc111e 0%, #8b0d16 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(188,17,30,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-btn:hover {
+            box-shadow: 0 8px 28px rgba(188,17,30,0.45);
+            transform: translateY(-1px);
+        }
+
+        .login-btn:active {
+            transform: scale(0.98);
+        }
+
+        .login-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.08), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .login-footer {
+            margin-top: 32px;
+            text-align: center;
+            font-size: 11px;
+            color: #3a3a44;
+        }
+
+        .login-footer span { color: #bc111e; }
+
+        /* Error Message */
+        .error-msg {
+            display: none;
+            color: #e85d68;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 12px;
+            text-align: center;
+            padding: 10px;
+            background: rgba(188,17,30,0.08);
+            border-radius: 8px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 900px) {
+            body { flex-direction: column; }
+            .visual-panel {
+                min-height: 35vh;
+                padding: 40px 20px;
+            }
+            .login-panel {
+                width: 100%;
+                padding: 36px 28px;
+                flex: 1;
+            }
+            .stats-row { gap: 28px; }
+            .v-title { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Left Visual Panel -->
+    <div class="visual-panel">
+        <div class="grid-bg"></div>
+        <div class="visual-content">
+            <div class="v-logo">
+                <img src="logo.jpg" alt="Logo">
+            </div>
+            <div class="v-title">Rajasthani Sweets</div>
+            <div class="v-subtitle">Restaurant Management System</div>
+
+            <div class="stats-row">
+                <div class="stat">
+                    <div class="stat-num">24/7</div>
+                    <div class="stat-label">Uptime</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">Live</div>
+                    <div class="stat-label">Real-time Orders</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">100%</div>
+                    <div class="stat-label">Secure</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Login Panel -->
+    <div class="login-panel">
+        <div class="login-header">
+            <div class="login-badge">🔐 Admin Portal</div>
+            <div class="login-title">Welcome Back, Owner</div>
+            <div class="login-desc">Sign in to manage your restaurant</div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Username</label>
+            <input type="text" class="form-input" id="admin-user" placeholder="Enter your username" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-input" id="admin-pass" placeholder="Enter your password">
+        </div>
+
+        <button class="login-btn" onclick="doAdminLogin()">
+            Sign In to Dashboard →
+        </button>
+
+        <div class="error-msg" id="err-msg">Invalid credentials. Please try again.</div>
+
+        <div class="login-footer">
+            Secured by <span>JWT Authentication</span> · Session protected
+        </div>
+    </div>
+
+    <script>
+        // Enter key support
+        document.getElementById('admin-pass').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') doAdminLogin();
+        });
+
+        async function doAdminLogin() {
+            const user = document.getElementById('admin-user').value.trim();
+            const pass = document.getElementById('admin-pass').value.trim();
+            if (!user || !pass) return;
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ role: 'admin', user, pass })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    window.location.href = '/admin.html';
+                } else {
+                    document.getElementById('err-msg').style.display = 'block';
+                    setTimeout(() => document.getElementById('err-msg').style.display = 'none', 3000);
+                }
+            } catch (e) {
+                alert('Server not reachable. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>

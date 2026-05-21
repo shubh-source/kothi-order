@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kitchen Access | Rajasthani Sweets & Cafe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            background: #0c0f08;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Animated Steam Background */
+        .steam-bg {
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 30% 20%, rgba(34,90,34,0.12) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 70%, rgba(218,165,32,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.02) 0%, transparent 80%);
+        }
+
+        /* Floating steam particles */
+        .steam {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 50%;
+            animation: steamRise linear infinite;
+        }
+
+        .steam:nth-child(1) { left: 20%; animation-duration: 6s; animation-delay: 0s; }
+        .steam:nth-child(2) { left: 40%; animation-duration: 8s; animation-delay: 1s; width: 6px; height: 6px; }
+        .steam:nth-child(3) { left: 60%; animation-duration: 7s; animation-delay: 2s; }
+        .steam:nth-child(4) { left: 80%; animation-duration: 9s; animation-delay: 3s; width: 5px; height: 5px; }
+        .steam:nth-child(5) { left: 50%; animation-duration: 5s; animation-delay: 0.5s; }
+
+        @keyframes steamRise {
+            0% { bottom: -10px; opacity: 0; transform: translateX(0); }
+            20% { opacity: 0.5; }
+            80% { opacity: 0.3; }
+            100% { bottom: 100vh; opacity: 0; transform: translateX(30px); }
+        }
+
+        /* Card */
+        .kitchen-card {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 440px;
+            margin: 20px;
+            background: linear-gradient(165deg, #161a12 0%, #111410 50%, #0e1210 100%);
+            border: 1px solid rgba(218,165,32,0.12);
+            border-radius: 28px;
+            padding: 48px 40px;
+            text-align: center;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.03);
+            animation: cardReveal 0.8s ease-out;
+        }
+
+        @keyframes cardReveal {
+            from { opacity: 0; transform: translateY(20px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Top accent line */
+        .kitchen-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #2e7d52, #daa520, #2e7d52);
+            border-radius: 0 0 4px 4px;
+        }
+
+        /* Chef Hat Icon */
+        .chef-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, rgba(46,125,82,0.15), rgba(46,125,82,0.05));
+            border: 1px solid rgba(46,125,82,0.2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 38px;
+            animation: iconBounce 2s ease-in-out infinite;
+        }
+
+        @keyframes iconBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .k-badge {
+            display: inline-block;
+            padding: 5px 14px;
+            background: rgba(46,125,82,0.12);
+            border: 1px solid rgba(46,125,82,0.2);
+            border-radius: 16px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #5ac28a;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .k-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .k-desc {
+            font-size: 13px;
+            color: #5a5f52;
+            margin-bottom: 36px;
+        }
+
+        /* Form */
+        .k-form-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .k-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: #6b7060;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .k-input {
+            width: 100%;
+            padding: 15px 16px;
+            background: #0e120c;
+            border: 1px solid #222820;
+            border-radius: 12px;
+            color: #e0e5d8;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .k-input:focus {
+            border-color: #2e7d52;
+            box-shadow: 0 0 0 3px rgba(46,125,82,0.12);
+        }
+
+        .k-input::placeholder {
+            color: #2a302a;
+        }
+
+        .k-btn {
+            width: 100%;
+            padding: 17px;
+            background: linear-gradient(135deg, #2e7d52 0%, #1e5e3a 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            margin-top: 8px;
+            box-shadow: 0 6px 20px rgba(46,125,82,0.25);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .k-btn:hover {
+            box-shadow: 0 8px 28px rgba(46,125,82,0.4);
+            transform: translateY(-1px);
+        }
+
+        .k-btn:active {
+            transform: scale(0.98);
+        }
+
+        .k-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.06), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .k-error {
+            display: none;
+            color: #e85d68;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 12px;
+            padding: 10px;
+            background: rgba(188,17,30,0.08);
+            border-radius: 8px;
+        }
+
+        .k-footer {
+            margin-top: 28px;
+            font-size: 11px;
+            color: #2a302a;
+        }
+
+        .k-footer span { color: #2e7d52; }
+
+        /* Live indicator */
+        .live-strip {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 24px;
+            font-size: 11px;
+            color: #3a4036;
+        }
+
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.6); }
+        }
+
+        @media (max-width: 500px) {
+            .kitchen-card {
+                margin: 16px;
+                padding: 36px 24px;
+                border-radius: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="steam-bg"></div>
+    <div class="steam"></div>
+    <div class="steam"></div>
+    <div class="steam"></div>
+    <div class="steam"></div>
+    <div class="steam"></div>
+
+    <div class="kitchen-card">
+        <div class="chef-icon">👨‍🍳</div>
+        <div class="k-badge">Kitchen Display System</div>
+        <div class="k-title">Chef's Station</div>
+        <div class="k-desc">Sign in to view and manage live orders</div>
+
+        <div class="k-form-group">
+            <label class="k-label">Username</label>
+            <input type="text" class="k-input" id="k-user" placeholder="Chef username" autocomplete="off">
+        </div>
+
+        <div class="k-form-group">
+            <label class="k-label">Password</label>
+            <input type="password" class="k-input" id="k-pass" placeholder="Enter password">
+        </div>
+
+        <button class="k-btn" onclick="doKitchenLogin()">
+            Enter Kitchen Display →
+        </button>
+
+        <div class="k-error" id="k-err">Wrong credentials! Please try again.</div>
+
+        <div class="live-strip">
+            <div class="live-dot"></div>
+            <span>Orders streaming live</span>
+        </div>
+
+        <div class="k-footer">
+            <span>Rajasthani Sweets</span> · Kitchen Management
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('k-pass').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') doKitchenLogin();
+        });
+
+        async function doKitchenLogin() {
+            const user = document.getElementById('k-user').value.trim();
+            const pass = document.getElementById('k-pass').value.trim();
+            if (!user || !pass) return;
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ role: 'kitchen', user, pass })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    window.location.href = '/kitchen.html';
+                } else {
+                    document.getElementById('k-err').style.display = 'block';
+                    setTimeout(() => document.getElementById('k-err').style.display = 'none', 3000);
+                }
+            } catch (e) {
+                alert('Server not reachable. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>
