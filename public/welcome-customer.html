@@ -158,6 +158,15 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        /* Fade out for body before redirect */
+        body.fade-out {
+            animation: fadeOutBody 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        @keyframes fadeOutBody {
+            from { opacity: 1; filter: blur(0px); transform: scale(1); }
+            to { opacity: 0; filter: blur(4px); transform: scale(0.98); }
+        }
+
         /* Success Animation */
         .success-checkmark {
             width: 80px;
@@ -208,7 +217,7 @@
                 <img src="logo.jpg" alt="Rajasthani Sweets & Cafe">
             </div>
             <div class="brand-name">Rajasthani Sweets</div>
-            <div class="brand-tagline">Tonpson Ganj, Sitapur</div>
+            <div class="brand-tagline">TOMPSON GANJ, Sitapur</div>
             <div class="welcome-text" style="margin-bottom: 40px;">Welcomes You! 🙏</div>
             
             <button class="cta-btn" onclick="nextStep(2)">
@@ -375,12 +384,15 @@
             
             nextStep(4);
 
-            // Redirect after 3 seconds
+            // Redirect with smooth fade-out after 2 seconds
             setTimeout(() => {
-                const params = new URLSearchParams(window.location.search);
-                const table = params.get('table') || '1';
-                window.location.href = '/customer.html?table=' + table;
-            }, 3000);
+                document.body.classList.add('fade-out');
+                setTimeout(() => {
+                    const params = new URLSearchParams(window.location.search);
+                    const table = params.get('table') || '1';
+                    window.location.href = '/customer.html?table=' + table;
+                }, 900); // Wait for fade-out animation to almost finish before changing URL
+            }, 2000);
         }
     </script>
 </body>
