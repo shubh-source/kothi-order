@@ -256,9 +256,40 @@
             50% { opacity: 0.4; transform: scale(1.6); }
         }
 
+        /* Step Views */
+        .step-view {
+            display: none;
+            animation: cardReveal 0.8s ease-out;
+            width: 100%;
+            max-width: 440px;
+            margin: 20px;
+        }
+        .step-view.active {
+            display: block;
+        }
+
+        .welcome-logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 24px;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+            border: 2px solid rgba(218,165,32,0.3);
+        }
+        .welcome-logo img { width: 100%; height: 100%; object-fit: cover; }
+
+        .fade-out-anim {
+            animation: fadeOut 0.8s ease-in forwards !important;
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; transform: scale(1); filter: blur(0); }
+            to { opacity: 0; transform: scale(0.95); filter: blur(4px); }
+        }
+
         @media (max-width: 500px) {
             .kitchen-card {
-                margin: 16px;
+                margin: 0;
                 padding: 36px 24px;
                 border-radius: 22px;
             }
@@ -273,39 +304,71 @@
     <div class="steam"></div>
     <div class="steam"></div>
 
-    <div class="kitchen-card">
-        <div class="chef-icon">👨‍🍳</div>
-        <div class="k-badge">Kitchen Display System</div>
-        <div class="k-title">Chef's Station</div>
-        <div class="k-desc">Sign in to view and manage live orders</div>
-
-        <div class="k-form-group">
-            <label class="k-label">Username</label>
-            <input type="text" class="k-input" id="k-user" placeholder="Chef username" autocomplete="off">
+    <!-- STEP 1: Welcome -->
+    <div id="step-1" class="step-view active">
+        <div class="kitchen-card">
+            <div class="welcome-logo">
+                <img src="logo.jpg" alt="Rajasthani Sweets">
+            </div>
+            <div class="k-title" style="font-size: 28px;">Welcome, Chef! 👨‍🍳</div>
+            <div class="k-desc" style="margin-bottom: 0;">Preparing your kitchen dashboard...</div>
+            
+            <div class="live-strip" style="margin-top: 30px;">
+                <div class="live-dot"></div>
+                <span>Syncing live orders</span>
+            </div>
         </div>
+    </div>
 
-        <div class="k-form-group">
-            <label class="k-label">Password</label>
-            <input type="password" class="k-input" id="k-pass" placeholder="Enter password">
-        </div>
+    <!-- STEP 2: Login -->
+    <div id="step-2" class="step-view">
+        <div class="kitchen-card">
+            <div class="chef-icon">👨‍🍳</div>
+            <div class="k-badge">Kitchen Display System</div>
+            <div class="k-title">Chef's Station</div>
+            <div class="k-desc">Sign in to view and manage live orders</div>
 
-        <button class="k-btn" onclick="doKitchenLogin()">
-            Enter Kitchen Display →
-        </button>
+            <div class="k-form-group">
+                <label class="k-label">Username</label>
+                <input type="text" class="k-input" id="k-user" placeholder="Chef username" autocomplete="off">
+            </div>
 
-        <div class="k-error" id="k-err">Wrong credentials! Please try again.</div>
+            <div class="k-form-group">
+                <label class="k-label">Password</label>
+                <input type="password" class="k-input" id="k-pass" placeholder="Enter password">
+            </div>
 
-        <div class="live-strip">
-            <div class="live-dot"></div>
-            <span>Orders streaming live</span>
-        </div>
+            <button class="k-btn" onclick="doKitchenLogin()">
+                Enter Kitchen Display →
+            </button>
 
-        <div class="k-footer">
-            <span>Rajasthani Sweets</span> · Kitchen Management
+            <div class="k-error" id="k-err">Wrong credentials! Please try again.</div>
+
+            <div class="live-strip">
+                <div class="live-dot"></div>
+                <span>Orders streaming live</span>
+            </div>
+
+            <div class="k-footer">
+                <span>Rajasthani Sweets</span> · Kitchen Management
+            </div>
         </div>
     </div>
 
     <script>
+        // Auto transition from welcome to login
+        window.onload = () => {
+            setTimeout(() => {
+                const step1 = document.getElementById('step-1');
+                step1.classList.add('fade-out-anim');
+                
+                setTimeout(() => {
+                    step1.classList.remove('active');
+                    document.getElementById('step-2').classList.add('active');
+                }, 750); // wait for fade out to finish
+            }, 2500); // show welcome for 2.5 seconds
+        };
+
         document.getElementById('k-pass').addEventListener('keyup', function(e) {
             if (e.key === 'Enter') doKitchenLogin();
         });
