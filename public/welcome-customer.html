@@ -20,18 +20,16 @@
             position: relative;
         }
 
-        /* Animated Background Pattern */
+        /* Animated Background */
         .bg-pattern {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            inset: 0;
             background-image: 
                 radial-gradient(circle at 20% 50%, rgba(188,17,30,0.06) 0%, transparent 50%),
                 radial-gradient(circle at 80% 20%, rgba(218,165,32,0.08) 0%, transparent 50%),
                 radial-gradient(circle at 50% 80%, rgba(188,17,30,0.04) 0%, transparent 50%);
-            z-index: 0;
         }
 
-        /* Floating Decorative Elements */
         .float-elem {
             position: fixed;
             border-radius: 50%;
@@ -65,10 +63,10 @@
 
         /* Logo */
         .logo-wrapper {
-            width: 110px;
-            height: 110px;
-            margin: 0 auto 24px;
-            border-radius: 24px;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 28px;
+            border-radius: 28px;
             overflow: hidden;
             box-shadow: 0 12px 40px rgba(188,17,30,0.15), 0 4px 12px rgba(0,0,0,0.08);
             animation: logoReveal 1.2s ease-out;
@@ -89,10 +87,10 @@
         /* Branding */
         .brand-name {
             font-family: 'Playfair Display', serif;
-            font-size: 28px;
+            font-size: 30px;
             font-weight: 800;
             color: #1a1a1a;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             letter-spacing: -0.5px;
         }
 
@@ -100,8 +98,8 @@
             font-size: 13px;
             color: #a09a93;
             font-weight: 500;
-            margin-bottom: 36px;
-            letter-spacing: 0.5px;
+            margin-bottom: 44px;
+            letter-spacing: 0.3px;
         }
 
         /* Decorative Divider */
@@ -110,7 +108,7 @@
             align-items: center;
             justify-content: center;
             gap: 12px;
-            margin-bottom: 36px;
+            margin-bottom: 28px;
             animation: fadeInUp 1.4s ease-out;
         }
         .divider-line {
@@ -118,61 +116,24 @@
             height: 1px;
             background: linear-gradient(90deg, transparent, #daa520, transparent);
         }
-        .divider-icon {
-            font-size: 16px;
-            color: #daa520;
-        }
+        .divider-icon { font-size: 16px; color: #daa520; }
 
         /* Welcome Text */
         .welcome-text {
             font-family: 'Playfair Display', serif;
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 700;
             color: #bc111e;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             animation: fadeInUp 1.6s ease-out;
         }
 
         .welcome-subtitle {
-            font-size: 14px;
+            font-size: 15px;
             color: #6b6560;
-            line-height: 1.6;
-            margin-bottom: 40px;
+            line-height: 1.7;
+            margin-bottom: 52px;
             animation: fadeInUp 1.8s ease-out;
-        }
-
-        /* Features Row */
-        .features {
-            display: flex;
-            justify-content: center;
-            gap: 28px;
-            margin-bottom: 44px;
-            animation: fadeInUp 2s ease-out;
-        }
-
-        .feature {
-            text-align: center;
-        }
-
-        .feature-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 8px;
-            font-size: 22px;
-            background: #fff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-            border: 1px solid #f0ece7;
-        }
-
-        .feature-label {
-            font-size: 11px;
-            font-weight: 600;
-            color: #8a857f;
-            letter-spacing: 0.3px;
         }
 
         /* CTA Button */
@@ -190,22 +151,18 @@
             cursor: pointer;
             box-shadow: 0 8px 24px rgba(188,17,30,0.3);
             transition: all 0.3s ease;
-            animation: fadeInUp 2.2s ease-out;
+            animation: fadeInUp 2s ease-out;
             position: relative;
             overflow: hidden;
         }
 
-        .cta-btn:active {
-            transform: scale(0.97);
-        }
+        .cta-btn:active { transform: scale(0.97); }
 
         .cta-btn::after {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
             background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
             animation: shimmer 3s infinite;
         }
@@ -215,33 +172,11 @@
             100% { transform: translateX(100%) rotate(45deg); }
         }
 
-        /* Footer */
         .footer-note {
-            margin-top: 28px;
+            margin-top: 36px;
             font-size: 11px;
             color: #c4bfb8;
-            animation: fadeInUp 2.4s ease-out;
-        }
-
-        .footer-note span {
-            color: #bc111e;
-        }
-
-        /* Pulse dot */
-        .pulse-dot {
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            background: #22c55e;
-            border-radius: 50%;
-            margin-right: 4px;
-            animation: pulse 2s infinite;
-            vertical-align: middle;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.5); }
+            animation: fadeInUp 2.2s ease-out;
         }
     </style>
 </head>
@@ -257,7 +192,7 @@
         </div>
 
         <div class="brand-name">Rajasthani Sweets & Cafe</div>
-        <div class="brand-tagline">Tonpson Ganj, Sitapur · Open till 10:30 PM</div>
+        <div class="brand-tagline">Tonpson Ganj, Sitapur</div>
 
         <div class="divider">
             <div class="divider-line"></div>
@@ -265,39 +200,22 @@
             <div class="divider-line"></div>
         </div>
 
-        <div class="welcome-text">Swaagat Hai Aapka! 🙏</div>
+        <div class="welcome-text">Welcomes You! 🙏</div>
         <div class="welcome-subtitle">
-            Browse our menu, place your order instantly<br>
-            and pay digitally — all from your phone!
-        </div>
-
-        <div class="features">
-            <div class="feature">
-                <div class="feature-icon">📱</div>
-                <div class="feature-label">Scan & Order</div>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">⚡</div>
-                <div class="feature-label">Instant</div>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">💳</div>
-                <div class="feature-label">UPI / Cash</div>
-            </div>
+            Authentic Rajasthani flavours,<br>served with love since generations.
         </div>
 
         <button class="cta-btn" onclick="goToMenu()">
-            View Menu & Order Now →
+            View Our Menu →
         </button>
 
         <div class="footer-note">
-            <span class="pulse-dot"></span> <span>Live</span> · Powered by Smart Ordering
+            Open daily till 10:30 PM
         </div>
     </div>
 
     <script>
         function goToMenu() {
-            // Pass along the table query param if present
             const params = new URLSearchParams(window.location.search);
             const table = params.get('table') || '1';
             window.location.href = '/customer.html?table=' + table;
