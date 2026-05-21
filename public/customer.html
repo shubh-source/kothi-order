@@ -49,6 +49,11 @@
       max-width: 540px;
       margin: 0 auto;
       position: relative;
+      animation: fadeInSmooth 0.8s ease-out forwards;
+    }
+    @keyframes fadeInSmooth {
+      from { opacity: 0; filter: blur(3px); }
+      to { opacity: 1; filter: blur(0px); }
     }
 
     /* ── HERO ── */
