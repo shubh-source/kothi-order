@@ -917,71 +917,20 @@
       display: flex !important;
     }
 
-    /* Premium Login Form Styles */
+    /* Login Form Styles */
     #login-view {
       padding: 40px 20px;
       text-align: center;
-      min-height: 100vh;
-      background: #faf8f5;
+      height: 100vh;
+      background: var(--white);
       flex-direction: column;
       justify-content: center;
-      position: relative;
-      overflow: hidden;
-      font-family: 'Inter', sans-serif;
-    }
-
-    /* Animated Background */
-    #login-view::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: 
-          radial-gradient(circle at 20% 50%, rgba(188,17,30,0.06) 0%, transparent 50%),
-          radial-gradient(circle at 80% 20%, rgba(218,165,32,0.08) 0%, transparent 50%),
-          radial-gradient(circle at 50% 80%, rgba(188,17,30,0.04) 0%, transparent 50%);
-      z-index: 0;
     }
 
     .login-box {
-      position: relative;
-      z-index: 1;
       max-width: 400px;
       margin: 0 auto;
       width: 100%;
-      animation: fadeInUp 1s ease-out;
-    }
-
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .logo-wrapper {
-        width: 110px;
-        height: 110px;
-        margin: 0 auto 24px;
-        border-radius: 24px;
-        overflow: hidden;
-        box-shadow: 0 12px 40px rgba(188,17,30,0.15), 0 4px 12px rgba(0,0,0,0.08);
-        border: 3px solid rgba(218,165,32,0.3);
-    }
-
-    .logo-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-
-    .brand-name {
-        font-family: 'Playfair Display', serif;
-        font-size: 28px;
-        font-weight: 800;
-        color: #1a1a1a;
-        margin-bottom: 4px;
-        letter-spacing: -0.5px;
-    }
-
-    .brand-tagline {
-        font-size: 13px;
-        color: #a09a93;
-        font-weight: 500;
-        margin-bottom: 36px;
     }
 
     .input-group {
@@ -991,59 +940,42 @@
 
     .input-group label {
       display: block;
-      font-size: 12px;
-      color: #8a857f;
+      font-size: 13px;
+      color: var(--text2);
       margin-bottom: 8px;
       font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
 
     .input-group input {
       width: 100%;
-      padding: 16px;
-      border: 1px solid #e0dbd5;
-      background: #fff;
-      border-radius: 12px;
-      font-size: 15px;
-      font-family: 'Inter', sans-serif;
-      transition: all 0.3s ease;
-      outline: none;
-    }
-
-    .input-group input:focus {
-        border-color: #bc111e;
-        box-shadow: 0 0 0 3px rgba(188,17,30,0.1);
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 16px;
+      font-family: 'DM Sans', sans-serif;
     }
 
     .btn-main {
       width: 100%;
-      padding: 18px 32px;
-      background: linear-gradient(135deg, #bc111e 0%, #8b0d16 100%);
+      padding: 15px;
+      background: var(--accent);
       color: white;
       border: none;
-      border-radius: 16px;
+      border-radius: var(--radius-sm);
       font-size: 16px;
       font-weight: 700;
-      font-family: 'Inter', sans-serif;
       cursor: pointer;
-      box-shadow: 0 8px 24px rgba(188,17,30,0.3);
-      transition: all 0.3s ease;
-      margin-top: 10px;
     }
-
-    .btn-main:active { transform: scale(0.97); }
   </style>
 </head>
 
 <body>
   <div id="login-view" class="view active">
     <div class="login-box">
-      <div class="logo-wrapper">
-        <img src="logo.jpg" alt="Rajasthani Sweets Logo">
-      </div>
-      <div class="brand-name">Rajasthani Sweets</div>
-      <div class="brand-tagline">Welcome! Please enter your details.</div>
+      <img src="logo.jpg" alt="Rajasthani Sweets Logo"
+        style="width: 200px; margin: 0 auto 24px; display: block; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+      <h1 style="font-family: 'Playfair Display', serif; margin-bottom: 5px;">Rajasthani Sweets</h1>
+      <p style="color: var(--text3); font-size: 13px; margin-bottom: 30px;">Welcome! Please enter your details.</p>
 
       <div class="input-group">
         <label>Mobile Number</label>
@@ -1053,7 +985,7 @@
         <label>Your Name</label>
         <input type="text" id="user-name" placeholder="E.g. Shubh Katiyar">
       </div>
-      <button class="btn-main" onclick="handleLogin()">Start Ordering →</button>
+      <button class="btn-main" onclick="handleLogin()">Start Ordering</button>
     </div>
   </div>
 
