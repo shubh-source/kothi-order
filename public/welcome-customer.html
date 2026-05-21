@@ -30,21 +30,6 @@
                 radial-gradient(circle at 50% 80%, rgba(188,17,30,0.04) 0%, transparent 50%);
         }
 
-        .float-elem {
-            position: fixed;
-            border-radius: 50%;
-            opacity: 0.07;
-            animation: floatUp 8s ease-in-out infinite;
-        }
-        .float-elem:nth-child(1) { width: 200px; height: 200px; background: #bc111e; top: 10%; left: -5%; animation-delay: 0s; }
-        .float-elem:nth-child(2) { width: 150px; height: 150px; background: #daa520; top: 60%; right: -3%; animation-delay: 2s; }
-        .float-elem:nth-child(3) { width: 100px; height: 100px; background: #bc111e; bottom: 5%; left: 20%; animation-delay: 4s; }
-
-        @keyframes floatUp {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(5deg); }
-        }
-
         /* Main Container */
         .welcome-container {
             position: relative;
@@ -53,11 +38,19 @@
             padding: 40px 24px;
             max-width: 420px;
             width: 100%;
-            animation: fadeInUp 1s ease-out;
+        }
+
+        /* View Management */
+        .step-view {
+            display: none;
+            animation: fadeInUp 0.6s ease-out;
+        }
+        .step-view.active {
+            display: block;
         }
 
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -69,71 +62,68 @@
             border-radius: 28px;
             overflow: hidden;
             box-shadow: 0 12px 40px rgba(188,17,30,0.15), 0 4px 12px rgba(0,0,0,0.08);
-            animation: logoReveal 1.2s ease-out;
             border: 3px solid rgba(218,165,32,0.3);
         }
+        .logo-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .logo-wrapper.small { width: 90px; height: 90px; margin-bottom: 20px; }
 
-        @keyframes logoReveal {
-            from { transform: scale(0.5) rotate(-10deg); opacity: 0; }
-            to { transform: scale(1) rotate(0deg); opacity: 1; }
-        }
-
-        .logo-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* Branding */
+        /* Typography */
         .brand-name {
             font-family: 'Playfair Display', serif;
             font-size: 30px;
             font-weight: 800;
             color: #1a1a1a;
             margin-bottom: 6px;
-            letter-spacing: -0.5px;
         }
-
         .brand-tagline {
-            font-size: 13px;
-            color: #a09a93;
+            font-size: 14px;
+            color: #6b6560;
             font-weight: 500;
-            margin-bottom: 44px;
-            letter-spacing: 0.3px;
+            margin-bottom: 36px;
         }
-
-        /* Decorative Divider */
-        .divider {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 28px;
-            animation: fadeInUp 1.4s ease-out;
-        }
-        .divider-line {
-            width: 50px;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #daa520, transparent);
-        }
-        .divider-icon { font-size: 16px; color: #daa520; }
-
-        /* Welcome Text */
+        
         .welcome-text {
             font-family: 'Playfair Display', serif;
-            font-size: 24px;
+            font-size: 26px;
             font-weight: 700;
             color: #bc111e;
-            margin-bottom: 10px;
-            animation: fadeInUp 1.6s ease-out;
+            margin-bottom: 12px;
         }
 
-        .welcome-subtitle {
-            font-size: 15px;
-            color: #6b6560;
-            line-height: 1.7;
-            margin-bottom: 52px;
-            animation: fadeInUp 1.8s ease-out;
+        /* Inputs */
+        .input-group {
+            margin-bottom: 24px;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            color: #8a857f;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid #e0dbd5;
+            background: #fff;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .input-group input:focus {
+            border-color: #bc111e;
+            box-shadow: 0 0 0 3px rgba(188,17,30,0.1);
+        }
+        .error-text {
+            color: #bc111e;
+            font-size: 12px;
+            margin-top: 8px;
+            display: none;
         }
 
         /* CTA Button */
@@ -151,74 +141,246 @@
             cursor: pointer;
             box-shadow: 0 8px 24px rgba(188,17,30,0.3);
             transition: all 0.3s ease;
-            animation: fadeInUp 2s ease-out;
-            position: relative;
-            overflow: hidden;
         }
-
         .cta-btn:active { transform: scale(0.97); }
+        .cta-btn:disabled { opacity: 0.7; cursor: not-allowed; }
 
-        .cta-btn::after {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-            animation: shimmer 3s infinite;
+        /* Loader */
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            display: none;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Success Animation */
+        .success-checkmark {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+            box-shadow: 0 8px 24px rgba(34,197,94,0.3);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
         }
 
-        @keyframes shimmer {
-            0% { transform: translateX(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) rotate(45deg); }
+        .redirecting-text {
+            font-size: 13px;
+            color: #8a857f;
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
-
-        .footer-note {
-            margin-top: 36px;
-            font-size: 11px;
-            color: #c4bfb8;
-            animation: fadeInUp 2.2s ease-out;
+        .dot-flashing {
+            width: 6px; height: 6px; border-radius: 50%; background-color: #bc111e;
+            animation: dotFlashing 1s infinite linear alternate;
+        }
+        @keyframes dotFlashing {
+            0% { opacity: 1; }
+            50%, 100% { opacity: 0.2; }
         }
     </style>
 </head>
 <body>
     <div class="bg-pattern"></div>
-    <div class="float-elem"></div>
-    <div class="float-elem"></div>
-    <div class="float-elem"></div>
 
     <div class="welcome-container">
-        <div class="logo-wrapper">
-            <img src="logo.jpg" alt="Rajasthani Sweets & Cafe">
+        
+        <!-- STEP 1: Main Welcome -->
+        <div id="step-1" class="step-view active">
+            <div class="logo-wrapper">
+                <img src="logo.jpg" alt="Rajasthani Sweets & Cafe">
+            </div>
+            <div class="brand-name">Rajasthani Sweets</div>
+            <div class="brand-tagline">Tonpson Ganj, Sitapur</div>
+            <div class="welcome-text" style="margin-bottom: 40px;">Welcomes You! 🙏</div>
+            
+            <button class="cta-btn" onclick="nextStep(2)">
+                Get Started →
+            </button>
         </div>
 
-        <div class="brand-name">Rajasthani Sweets & Cafe</div>
-        <div class="brand-tagline">Tonpson Ganj, Sitapur</div>
+        <!-- STEP 2: Enter Phone -->
+        <div id="step-2" class="step-view">
+            <div class="logo-wrapper small">
+                <img src="logo.jpg" alt="Logo">
+            </div>
+            <div class="welcome-text" style="font-size: 22px;">Enter Your Details</div>
+            <div class="brand-tagline">Please provide your mobile number to continue.</div>
 
-        <div class="divider">
-            <div class="divider-line"></div>
-            <div class="divider-icon">✦</div>
-            <div class="divider-line"></div>
+            <div class="input-group">
+                <label>Mobile Number</label>
+                <input type="tel" id="user-phone" placeholder="10-digit mobile number" maxlength="10">
+                <div id="phone-err" class="error-text">Please enter a valid 10-digit number.</div>
+            </div>
+
+            <button id="btn-phone" class="cta-btn" onclick="checkUser()">
+                <span class="btn-text">Continue</span>
+                <span class="loader"></span>
+            </button>
         </div>
 
-        <div class="welcome-text">Welcomes You! 🙏</div>
-        <div class="welcome-subtitle">
-            Authentic Rajasthani flavours,<br>served with love since generations.
+        <!-- STEP 3: Enter Name (New User Only) -->
+        <div id="step-3" class="step-view">
+            <div class="logo-wrapper small">
+                <img src="logo.jpg" alt="Logo">
+            </div>
+            <div class="welcome-text" style="font-size: 22px;">Nice to meet you!</div>
+            <div class="brand-tagline">What should we call you?</div>
+
+            <div class="input-group">
+                <label>Full Name</label>
+                <input type="text" id="user-name" placeholder="E.g. Shubh Katiyar">
+                <div id="name-err" class="error-text">Please enter your name.</div>
+            </div>
+
+            <button id="btn-name" class="cta-btn" onclick="registerUser()">
+                <span class="btn-text">Submit Details</span>
+                <span class="loader"></span>
+            </button>
         </div>
 
-        <button class="cta-btn" onclick="goToMenu()">
-            View Our Menu →
-        </button>
-
-        <div class="footer-note">
-            Open daily till 10:30 PM
+        <!-- STEP 4: Success Greeting -->
+        <div id="step-4" class="step-view">
+            <div class="success-checkmark">✓</div>
+            <div class="welcome-text" id="greeting-text">Welcome, Mr. Shubh!</div>
+            <div class="brand-tagline" style="margin-bottom: 20px;">We're glad to have you here.</div>
+            
+            <div class="redirecting-text">
+                Taking you to the menu <div class="dot-flashing"></div>
+            </div>
         </div>
+
     </div>
 
     <script>
-        function goToMenu() {
-            const params = new URLSearchParams(window.location.search);
-            const table = params.get('table') || '1';
-            window.location.href = '/customer.html?table=' + table;
+        let currentPhone = '';
+        let currentName = '';
+
+        function nextStep(step) {
+            document.querySelectorAll('.step-view').forEach(el => el.classList.remove('active'));
+            document.getElementById('step-' + step).classList.add('active');
+        }
+
+        function toggleLoading(btnId, isLoading) {
+            const btn = document.getElementById(btnId);
+            const text = btn.querySelector('.btn-text');
+            const loader = btn.querySelector('.loader');
+            
+            if(isLoading) {
+                btn.disabled = true;
+                text.style.display = 'none';
+                loader.style.display = 'inline-block';
+            } else {
+                btn.disabled = false;
+                text.style.display = 'inline';
+                loader.style.display = 'none';
+            }
+        }
+
+        async function checkUser() {
+            const phone = document.getElementById('user-phone').value.trim();
+            const err = document.getElementById('phone-err');
+            
+            if(!/^[0-9]{10}$/.test(phone)) {
+                err.style.display = 'block';
+                return;
+            }
+            err.style.display = 'none';
+            currentPhone = phone;
+
+            toggleLoading('btn-phone', true);
+
+            try {
+                // We send only phone first. If it's a new user, server returns 400 with "Name is required"
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    // Old user! Logged in directly.
+                    localStorage.setItem('currentUser', JSON.stringify(data.user));
+                    currentName = data.user.name;
+                    showSuccess();
+                } else if (data.error && data.error.includes('Name is required')) {
+                    // New user! Needs name.
+                    nextStep(3);
+                } else {
+                    alert(data.error || 'Something went wrong');
+                }
+            } catch(e) {
+                alert('Server error. Please try again.');
+            }
+            toggleLoading('btn-phone', false);
+        }
+
+        async function registerUser() {
+            const name = document.getElementById('user-name').value.trim();
+            const err = document.getElementById('name-err');
+            
+            if(!name) {
+                err.style.display = 'block';
+                return;
+            }
+            err.style.display = 'none';
+            currentName = name;
+
+            toggleLoading('btn-name', true);
+
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: currentPhone, name })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    localStorage.setItem('currentUser', JSON.stringify(data.user));
+                    showSuccess();
+                } else {
+                    alert(data.error || 'Something went wrong');
+                }
+            } catch(e) {
+                alert('Server error. Please try again.');
+            }
+            toggleLoading('btn-name', false);
+        }
+
+        function showSuccess() {
+            // Title case the name and prepend Mr/Ms (keeping it simple: just Name for now as gender is unknown, 
+            // but user asked for "Welcome Mr. Shubh". We'll use just the first name and prepend Welcome, )
+            const firstName = currentName.split(' ')[0];
+            const greeting = `Welcome, ${firstName}!`;
+            document.getElementById('greeting-text').innerText = greeting;
+            
+            nextStep(4);
+
+            // Redirect after 3 seconds
+            setTimeout(() => {
+                const params = new URLSearchParams(window.location.search);
+                const table = params.get('table') || '1';
+                window.location.href = '/customer.html?table=' + table;
+            }, 3000);
         }
     </script>
 </body>
