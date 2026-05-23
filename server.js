@@ -87,6 +87,7 @@ const allQuery = async (sql, params = []) => {
             name TEXT,
             total_spent REAL DEFAULT 0,
             total_orders INTEGER DEFAULT 0,
+            wallet_balance REAL DEFAULT 0,
             created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
         )`);
 
@@ -97,6 +98,7 @@ const allQuery = async (sql, params = []) => {
             table_no TEXT,
             items TEXT,
             total_amount REAL,
+            wallet_used REAL DEFAULT 0,
             payment_method TEXT,
             payment_status TEXT,
             order_status TEXT,
@@ -111,6 +113,10 @@ const allQuery = async (sql, params = []) => {
         // Migrate existing columns to TIMESTAMPTZ for correct timezone handling
         await pool.query(`ALTER TABLE orders ALTER COLUMN timestamp TYPE TIMESTAMPTZ USING timestamp AT TIME ZONE 'UTC'`).catch(() => {});
         await pool.query(`ALTER TABLE users ALTER COLUMN created_at TYPE TIMESTAMPTZ USING created_at AT TIME ZONE 'UTC'`).catch(() => {});
+        
+        // Ensure wallet columns exist for old databases
+        await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS wallet_balance REAL DEFAULT 0`).catch(() => {});
+        await pool.query(`ALTER TABLE orders ADD COLUMN IF NOT EXISTS wallet_used REAL DEFAULT 0`).catch(() => {});
 
         console.log("PostgreSQL tables checked/created.");
     } catch(err) {
@@ -154,7 +160,7 @@ app.get('/api/auth/check', authMiddleware, (req, res) => {
 
 // 2. Orders: Place Order
 app.post('/api/orders', async (req, res) => {
-    const { id, phone, user_name, table_no, items, total_amount, payment_method, payment_status } = req.body;
+    const { id, phone, user_name, table_no, items, total_amount, payment_method, payment_status, wallet_used } = req.body;
 
     // Input Sanitization
     if (!id || !phone || !table_no || !items || !Array.isArray(items) || items.length === 0) {
@@ -166,13 +172,38 @@ app.post('/api/orders', async (req, res) => {
 
     const itemsJson = JSON.stringify(items);
     const timestampISO = new Date().toISOString();
+    const wUsed = parseFloat(wallet_used) || 0;
 
     try {
+        // Validate wallet balance if user is trying to use it
+        let userWallet = 0;
+        if (wUsed > 0) {
+            const userRows = await allQuery('SELECT wallet_balance FROM users WHERE phone = ?', [phone]);
+            if (userRows.length === 0 || (userRows[0].wallet_balance || 0) < wUsed) {
+                return res.status(400).json({ error: "Insufficient wallet balance" });
+            }
+        }
+
+        // Insert Order
         await runQuery(
-            `INSERT INTO orders (id, phone, user_name, table_no, items, total_amount, payment_method, payment_status, order_status, timestamp)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'new', ?)`,
-            [id, phone, user_name, table_no, itemsJson, total_amount, payment_method, payment_status || 'pending', timestampISO]
+            `INSERT INTO orders (id, phone, user_name, table_no, items, total_amount, wallet_used, payment_method, payment_status, order_status, timestamp)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', ?)`,
+            [id, phone, user_name, table_no, itemsJson, total_amount, wUsed, payment_method, payment_status || 'pending', timestampISO]
         );
+
+        // Deduct used wallet balance
+        if (wUsed > 0) {
+            await runQuery(`UPDATE users SET wallet_balance = wallet_balance - ? WHERE phone = ?`, [wUsed, phone]);
+        }
+
+        // Add 5% Cashback if payment is successful (UPI/Card via Razorpay)
+        let cbEarned = 0;
+        if (payment_status === 'paid') {
+            cbEarned = Math.floor(total_amount * 0.05);
+            if (cbEarned > 0) {
+                await runQuery(`UPDATE users SET wallet_balance = wallet_balance + ? WHERE phone = ?`, [cbEarned, phone]);
+            }
+        }
 
         // Update table status to occupied
         await runQuery(`INSERT INTO tables_status (table_no, status) VALUES (?, 'occupied') ON CONFLICT (table_no) DO UPDATE SET status = EXCLUDED.status`, [table_no]);
@@ -184,7 +215,11 @@ app.post('/api/orders', async (req, res) => {
         io.emit('order_update', { action: 'placed', order: newOrder[0] });
         io.emit('table_update', { table_no, status: 'occupied' });
 
-        res.json({ success: true, order: newOrder[0] });
+        // Fetch updated wallet balance
+        const updatedUser = await allQuery('SELECT wallet_balance FROM users WHERE phone = ?', [phone]);
+        const newWalletBalance = updatedUser.length > 0 ? updatedUser[0].wallet_balance : 0;
+
+        res.json({ success: true, order: newOrder[0], wallet_balance: newWalletBalance });
     } catch (e) {
         res.status(500).json({ error: e.message });
     }

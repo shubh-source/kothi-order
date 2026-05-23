@@ -1008,6 +1008,8 @@
           </div>
         </div>
         <div style="display:flex; gap: 8px; align-items:center;">
+          <div class="table-chip" id="wallet-chip" style="display:none; cursor:pointer; background:var(--gold-bg); border-color:var(--gold-border); color:#b5852a; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: background 0.2s; font-weight: 700;">
+            💳 ₹0</div>
           <div class="table-chip" id="history-chip" onclick="openHistory()"
             style="cursor:pointer; background:var(--white); border-color:var(--border); color:var(--text); box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: background 0.2s;">
             📜 Bills</div>
@@ -1406,6 +1408,7 @@
       var cart = {}, payMethod = 'cash', selectedCats = [], searchQ = '';
       var dishSel = null, dishSize = 'full', dishQty = 1;
       var oidCtr = 2000;
+      var useWalletBalance = false;
 
       // ── RENDER MENU ──────────────────────────────────────────────
       function renderMenu() {
@@ -1601,13 +1604,19 @@
 
       function sizeLabel(s) { return { half: 'Half', full: 'Full', small: 'Small', medium: 'Medium', large: 'Large' }[s] || s; }
 
+      function toggleWallet() { useWalletBalance = !useWalletBalance; renderCart(); }
+
       function renderCart() {
         var ents = entries(), sub = subtotal(), t = gst(), pf = platformFee(), tot = total(), cb = cashback();
         
-        var btnTxt = 'Proceed to Pay — ₹' + tot;
+        var walletBal = (currentUser && currentUser.wallet_balance) ? currentUser.wallet_balance : 0;
+        var wUsed = useWalletBalance ? Math.min(walletBal, tot) : 0;
+        var finalTot = tot - wUsed;
+
+        var btnTxt = 'Proceed to Pay — ₹' + finalTot;
         if (payMethod === 'cash') btnTxt = 'Place Order (Pay Cash)';
-        if (payMethod === 'card_counter') btnTxt = 'Place Order (Swipe Card At Counter)';
-        if (payMethod === 'online') btnTxt = 'Pay via Razorpay — ₹' + tot;
+        if (payMethod === 'card_counter') btnTxt = 'Place Order (Swipe Card)';
+        if (payMethod === 'online') btnTxt = 'Pay via Razorpay — ₹' + finalTot;
 
         document.getElementById('cart-inner').innerHTML =
           '<div class="sheet-title">Your Order</div>' +
@@ -1622,9 +1631,13 @@
           '<div class="sum-row"><span>Subtotal</span><span>₹' + sub + '</span></div>' +
           '<div class="sum-row"><span>GST (5%)</span><span>₹' + t + '</span></div>' +
           (pf > 0 ? '<div class="sum-row"><span>Platform Fee (Tech Support)</span><span>₹' + pf + '</span></div>' : '') +
-          (payMethod === 'online' ? '<div class="sum-row cb-row"><span>🎁 Cashback earned</span><span>₹' + cb + '</span></div>' :
+          (walletBal > 0 ? 
+            '<div class="sum-row" style="margin-top:8px; cursor:pointer;" onclick="toggleWallet()">' +
+            '<label style="display:flex; align-items:center; gap:8px; cursor:pointer; width:100%;"><input type="checkbox" ' + (useWalletBalance ? 'checked' : '') + ' style="width:16px; height:16px; accent-color:var(--gold);"> <span style="font-weight:600; color:var(--gold);">Use Wallet Balance (Available: ₹' + walletBal + ')</span></label><span>' + (useWalletBalance ? '-₹' + wUsed : '') + '</span></div>' 
+            : '') +
+          (payMethod === 'online' ? '<div class="sum-row cb-row" style="margin-top:8px;"><span>🎁 Cashback earned</span><span>₹' + cb + '</span></div>' :
             '<div class="sum-row" style="font-size:11px;color:#a09a93;"><span>Pay Online to earn cashback</span></div>') +
-          '<div class="sum-row total"><span>Total Payable</span><span>₹' + tot + '</span></div>' +
+          '<div class="sum-row total"><span>Total Payable</span><span>₹' + finalTot + '</span></div>' +
           '</div>' +
           '<div class="pay-section-lbl">Payment Method</div>' +
           '<div class="pay-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 12px; gap: 8px;">' +
@@ -1633,7 +1646,7 @@
             payOpt('cash', '💵', 'Cash (At Counter)') +
           '</div>' +
           '<textarea class="note-inp" rows="2" placeholder="Special instructions (e.g. less spicy, no onion)..."></textarea>' +
-          '<button class="place-btn" onclick="placeOrder(' + tot + ',' + cb + ')">' + btnTxt + '</button>' +
+          '<button class="place-btn" onclick="placeOrder(' + finalTot + ',' + cb + ',' + wUsed + ')">' + btnTxt + '</button>' +
           '<button class="back-btn" onclick="document.getElementById(\'cart-modal\').classList.remove(\'open\')">← Add more items</button>';
       }
 
@@ -1646,11 +1659,12 @@
       function selPay(m) { payMethod = m; renderCart(); }
 
 
-      async function placeOrder(tot, cb) {
-        if (!currentUser) {
-          alert('Please login first!');
-          return;
-        }
+      async function placeOrder(tot, cb, wUsed) {
+        if (!currentUser) return alert('Please login first!');
+        if (Object.keys(cart).length === 0) return alert('Cart is empty!');
+        
+        // Ensure wUsed is a number
+        wUsed = wUsed || 0;
 
         document.getElementById('cart-modal').classList.remove('open');
 
@@ -1666,13 +1680,36 @@
               user_name: currentUser.name,
               table_no: TABLE,
               items: itemsArray,
-              total_amount: tot,
+              total_amount: tot + wUsed, // Send the original total amount to the DB
+              wallet_used: wUsed,
               payment_method: payMethod,
               payment_status: 'pending' // ALWAYS pending until verified!
             })
           });
           const data = await res.json();
           var oid = data.order ? data.order.id : orderId;
+
+          // Update wallet balance locally
+          if (data.wallet_balance !== undefined) {
+              currentUser.wallet_balance = data.wallet_balance;
+              localStorage.setItem('currentUser', JSON.stringify(currentUser));
+              // Update wallet chip UI
+              const wChip = document.getElementById('wallet-chip');
+              if (wChip) {
+                  if (currentUser.wallet_balance > 0) {
+                      wChip.style.display = 'block';
+                      wChip.textContent = '💳 ₹' + currentUser.wallet_balance;
+                  } else {
+                      wChip.style.display = 'none';
+                  }
+              }
+          }
+
+          // If the wallet balance covered the entire bill, skip Razorpay
+          if (tot === 0) {
+              showSuccess(oid, cb);
+              return;
+          }
 
           if (payMethod === 'online') {
             // Fetch Razorpay Config
@@ -1838,6 +1875,12 @@
     if (currentUser) {
       document.getElementById('login-view').classList.remove('active');
       document.getElementById('menu-view').classList.add('active');
+      
+      const wChip = document.getElementById('wallet-chip');
+      if (wChip && currentUser.wallet_balance > 0) {
+          wChip.style.display = 'block';
+          wChip.textContent = '💳 ₹' + currentUser.wallet_balance;
+      }
     }
 
     // Real-time bill syncing
