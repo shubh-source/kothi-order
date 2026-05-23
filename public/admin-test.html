@@ -66,6 +66,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Chart.js for Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -111,6 +113,7 @@
     <div class="nav-item" onclick="switchNav(this, 'v-history')">History</div>
     <div class="nav-item" onclick="switchNav(this, 'v-tables')">Tables Status</div>
     <div class="nav-item" onclick="switchNav(this, 'v-users'); loadUsers();">Customers</div>
+    <div class="nav-item" onclick="switchNav(this, 'v-analytics'); loadAnalytics();">📈 Analytics</div>
     <div class="nav-item" onclick="switchNav(this, 'v-qr')">QR Codes</div>
 </div>
 
@@ -183,6 +186,33 @@
                 <thead><tr><th>Phone</th><th>Name</th><th>Total Orders</th><th>Total Spend</th></tr></thead>
                 <tbody id="users-body"></tbody>
             </table>
+        </div>
+    </div>
+
+    <!-- Analytics Dashboard -->
+    <div id="v-analytics" class="view">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+            <div class="panel" style="margin-bottom: 0;">
+                <h2 style="font-size:18px;">Revenue (Last 7 Days)</h2>
+                <canvas id="revChart" height="200"></canvas>
+            </div>
+            <div class="panel" style="margin-bottom: 0;">
+                <h2 style="font-size:18px;">Peak Order Hours</h2>
+                <canvas id="peakChart" height="200"></canvas>
+            </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <div class="panel" style="margin-bottom: 0;">
+                <h2 style="font-size:18px;">Top 5 Best Selling Items</h2>
+                <canvas id="itemsChart" height="200"></canvas>
+            </div>
+            <div class="panel" style="margin-bottom: 0;">
+                <h2 style="font-size:18px;">🏆 VIP Customers (Top Spenders)</h2>
+                <table>
+                    <thead><tr><th>Name</th><th>Phone</th><th>Spent</th></tr></thead>
+                    <tbody id="vip-users-body"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -261,6 +291,82 @@
         document.getElementById('users-body').innerHTML = users.map(u => 
             `<tr><td>${u.phone}</td><td>${u.name}</td><td>${u.total_orders}</td><td>₹${u.total_spent}</td></tr>`
         ).join('');
+    }
+
+    let chartsRendered = {};
+    async function loadAnalytics() {
+        try {
+            const data = await fetch(`${API}/analytics`).then(r=>r.json());
+            if(!data.success) return;
+
+            // Destroy old charts to prevent overlapping
+            if(chartsRendered['rev']) chartsRendered['rev'].destroy();
+            if(chartsRendered['peak']) chartsRendered['peak'].destroy();
+            if(chartsRendered['items']) chartsRendered['items'].destroy();
+
+            // 1. Revenue Chart (Line)
+            const revCtx = document.getElementById('revChart').getContext('2d');
+            chartsRendered['rev'] = new Chart(revCtx, {
+                type: 'line',
+                data: {
+                    labels: data.sevenDays.map(d => new Date(d.date).toLocaleDateString(undefined, {month:'short', day:'numeric'})),
+                    datasets: [{
+                        label: 'Revenue (₹)',
+                        data: data.sevenDays.map(d => d.revenue),
+                        borderColor: '#bc111e',
+                        backgroundColor: 'rgba(188, 17, 30, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: {display: false} }, scales: { y: { beginAtZero: true } } }
+            });
+
+            // 2. Peak Hours Chart (Bar)
+            const peakCtx = document.getElementById('peakChart').getContext('2d');
+            chartsRendered['peak'] = new Chart(peakCtx, {
+                type: 'bar',
+                data: {
+                    labels: data.peakHours.map(d => {
+                        let h = parseInt(d.hour); 
+                        return (h%12||12) + (h>=12?' PM':' AM');
+                    }),
+                    datasets: [{
+                        label: 'Orders',
+                        data: data.peakHours.map(d => d.count),
+                        backgroundColor: '#d4aa55',
+                        borderRadius: 6
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: {display: false} }, scales: { y: { beginAtZero: true } } }
+            });
+
+            // 3. Top Items (Doughnut)
+            const itemsCtx = document.getElementById('itemsChart').getContext('2d');
+            chartsRendered['items'] = new Chart(itemsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.topItems.map(d => d.name),
+                    datasets: [{
+                        data: data.topItems.map(d => d.qty),
+                        backgroundColor: ['#bc111e', '#d4aa55', '#22222a', '#e8e4df', '#64748b'],
+                        borderWidth: 2
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '65%' }
+            });
+
+            // 4. VIP Users Table
+            document.getElementById('vip-users-body').innerHTML = data.vipUsers.map((u, i) => 
+                `<tr>
+                    <td><b>${i===0?'👑 ':''}${u.name}</b></td>
+                    <td>${u.phone}</td>
+                    <td style="color:#bc111e; font-weight:700;">₹${u.total_spent}</td>
+                </tr>`
+            ).join('');
+
+        } catch(e) { console.error("Error loading analytics:", e); }
     }
 
     // Renderers
