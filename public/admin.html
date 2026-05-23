@@ -66,38 +66,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Chart.js for Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-<div id="login-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#f3f0eb;z-index:99999;display:flex;align-items:center;justify-content:center;">
-  <div style="background:white;padding:40px;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,0.1);width:100%;max-width:340px;text-align:center;border:1px solid #e8e4df;">
-    <img src="logo.jpg" alt="Logo" style="height:56px;border-radius:8px;margin-bottom:16px;">
-    <h2 style="margin:0 0 4px;color:#bc111e;font-size:20px;font-family:'Playfair Display',serif;">Admin Access</h2>
-    <p style="margin:0 0 24px;color:#a09a93;font-size:13px;">Rajasthani Sweets Dashboard</p>
-    <input type="text" id="l-user" placeholder="User ID" style="width:100%;padding:12px 14px;margin-bottom:12px;border:1px solid #e8e4df;border-radius:8px;box-sizing:border-box;font-size:15px;outline:none;">
-    <input type="password" id="l-pass" placeholder="Password" style="width:100%;padding:12px 14px;margin-bottom:20px;border:1px solid #e8e4df;border-radius:8px;box-sizing:border-box;font-size:15px;outline:none;">
-    <button onclick="doLogin()" style="width:100%;padding:14px;background:#bc111e;color:white;border:none;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;letter-spacing:0.5px;">Login to Dashboard</button>
-  </div>
-</div>
 <script>
   // Check auth via backend cookie
   fetch('/api/auth/check').then(r => r.json()).then(d => {
-      if(d.success && d.role === 'admin') {
-          document.getElementById('login-overlay').style.display='none';
+      if(!d.success || d.role !== 'admin') {
+          window.location.href = '/welcome-admin.html';
       }
-  }).catch(e => console.log('Not authenticated'));
-
-  async function doLogin() {
-    var u = document.getElementById('l-user').value;
-    var p = document.getElementById('l-pass').value;
-    var r = await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({role:'admin',user:u,pass:p})});
-    var d = await r.json();
-    if(d.success){
-        document.getElementById('login-overlay').style.display='none';
-        loadData();
-    }
-    else alert('Access Denied! Wrong credentials.');
-  }
+  }).catch(e => {
+      window.location.href = '/welcome-admin.html';
+  });
 </script>
 
 <div id="print-area" style="display:none;"></div>
@@ -111,6 +93,7 @@
     <div class="nav-item" onclick="switchNav(this, 'v-history')">History</div>
     <div class="nav-item" onclick="switchNav(this, 'v-tables')">Tables Status</div>
     <div class="nav-item" onclick="switchNav(this, 'v-users'); loadUsers();">Customers</div>
+    <div class="nav-item" onclick="switchNav(this, 'v-analytics'); loadAnalytics();">📈 Analytics</div>
     <div class="nav-item" onclick="switchNav(this, 'v-qr')">QR Codes</div>
 </div>
 
@@ -183,6 +166,40 @@
                 <thead><tr><th>Phone</th><th>Name</th><th>Total Orders</th><th>Total Spend</th></tr></thead>
                 <tbody id="users-body"></tbody>
             </table>
+        </div>
+    </div>
+
+    <!-- Analytics Dashboard -->
+    <div id="v-analytics" class="view">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; align-items: start;">
+            <div class="panel" style="margin-bottom: 0;">
+                <h2 style="font-size:18px;">Revenue (Last 7 Days)</h2>
+                <div style="position:relative; height:220px; width:100%;">
+                    <canvas id="revChart"></canvas>
+                </div>
+            </div>
+            <div class="panel" style="margin-bottom: 0;">
+                <h2 style="font-size:18px;">Peak Order Hours</h2>
+                <div style="position:relative; height:220px; width:100%;">
+                    <canvas id="peakChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start;">
+            <div class="panel" style="margin-bottom: 0;">
+                <h2 style="font-size:18px;">Top 5 Best Selling Items</h2>
+                <div id="no-items-msg" style="display:none; padding:40px 0; text-align:center; color:#a09a93; font-size:14px; font-weight:500;">No items sold yet.</div>
+                <div id="itemsChartWrapper" style="position:relative; height:220px; width:100%;">
+                    <canvas id="itemsChart"></canvas>
+                </div>
+            </div>
+            <div class="panel" style="margin-bottom: 0;">
+                <h2 style="font-size:18px;">🏆 VIP Customers (Top Spenders)</h2>
+                <table>
+                    <thead><tr><th>Name</th><th>Phone</th><th>Spent</th></tr></thead>
+                    <tbody id="vip-users-body"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -261,6 +278,90 @@
         document.getElementById('users-body').innerHTML = users.map(u => 
             `<tr><td>${u.phone}</td><td>${u.name}</td><td>${u.total_orders}</td><td>₹${u.total_spent}</td></tr>`
         ).join('');
+    }
+
+    let chartsRendered = {};
+    async function loadAnalytics() {
+        try {
+            const data = await fetch(`${API}/analytics`).then(r=>r.json());
+            if(!data.success) return;
+
+            // Destroy old charts to prevent overlapping
+            if(chartsRendered['rev']) chartsRendered['rev'].destroy();
+            if(chartsRendered['peak']) chartsRendered['peak'].destroy();
+            if(chartsRendered['items']) chartsRendered['items'].destroy();
+
+            // 1. Revenue Chart (Line)
+            const revCtx = document.getElementById('revChart').getContext('2d');
+            chartsRendered['rev'] = new Chart(revCtx, {
+                type: 'line',
+                data: {
+                    labels: data.sevenDays.map(d => new Date(d.date).toLocaleDateString(undefined, {month:'short', day:'numeric'})),
+                    datasets: [{
+                        label: 'Revenue (₹)',
+                        data: data.sevenDays.map(d => d.revenue),
+                        borderColor: '#bc111e',
+                        backgroundColor: 'rgba(188, 17, 30, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: {display: false} }, scales: { y: { beginAtZero: true } } }
+            });
+
+            // 2. Peak Hours Chart (Bar)
+            const peakCtx = document.getElementById('peakChart').getContext('2d');
+            chartsRendered['peak'] = new Chart(peakCtx, {
+                type: 'bar',
+                data: {
+                    labels: data.peakHours.map(d => {
+                        let h = parseInt(d.hour); 
+                        return (h%12||12) + (h>=12?' PM':' AM');
+                    }),
+                    datasets: [{
+                        label: 'Orders',
+                        data: data.peakHours.map(d => d.count),
+                        backgroundColor: '#d4aa55',
+                        borderRadius: 6,
+                        maxBarThickness: 40
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: {display: false} }, scales: { y: { beginAtZero: true } } }
+            });
+
+            // 3. Top Items (Doughnut)
+            if (data.topItems.length === 0) {
+                document.getElementById('itemsChartWrapper').style.display = 'none';
+                document.getElementById('no-items-msg').style.display = 'block';
+            } else {
+                document.getElementById('itemsChartWrapper').style.display = 'block';
+                document.getElementById('no-items-msg').style.display = 'none';
+                const itemsCtx = document.getElementById('itemsChart').getContext('2d');
+                chartsRendered['items'] = new Chart(itemsCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: data.topItems.map(d => d.name),
+                        datasets: [{
+                            data: data.topItems.map(d => d.qty),
+                            backgroundColor: ['#bc111e', '#d4aa55', '#22222a', '#e8e4df', '#64748b'],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, cutout: '65%' }
+                });
+            }
+
+            // 4. VIP Users Table
+            document.getElementById('vip-users-body').innerHTML = data.vipUsers.map((u, i) => 
+                `<tr>
+                    <td><b>${i===0?'👑 ':''}${u.name}</b></td>
+                    <td>${u.phone}</td>
+                    <td style="color:#bc111e; font-weight:700;">₹${u.total_spent}</td>
+                </tr>`
+            ).join('');
+
+        } catch(e) { console.error("Error loading analytics:", e); }
     }
 
     // Renderers
