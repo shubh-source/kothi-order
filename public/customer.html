@@ -1008,7 +1008,7 @@
           </div>
         </div>
         <div style="display:flex; gap: 8px; align-items:center;">
-          <div class="table-chip" id="wallet-chip" style="display:none; cursor:pointer; background:var(--gold-bg); border-color:var(--gold-border); color:#b5852a; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: background 0.2s; font-weight: 700;">
+          <div class="table-chip" id="wallet-chip" style="cursor:pointer; background:var(--gold-bg); border-color:var(--gold-border); color:#b5852a; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: background 0.2s; font-weight: 700;">
             💳 ₹0</div>
           <div class="table-chip" id="history-chip" onclick="openHistory()"
             style="cursor:pointer; background:var(--white); border-color:var(--border); color:var(--text); box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: background 0.2s;">
@@ -1696,12 +1696,8 @@
               // Update wallet chip UI
               const wChip = document.getElementById('wallet-chip');
               if (wChip) {
-                  if (currentUser.wallet_balance > 0) {
-                      wChip.style.display = 'block';
-                      wChip.textContent = '💳 ₹' + currentUser.wallet_balance;
-                  } else {
-                      wChip.style.display = 'none';
-                  }
+                  wChip.style.display = 'block';
+                  wChip.textContent = '💳 ₹' + currentUser.wallet_balance;
               }
           }
 
@@ -1877,7 +1873,7 @@
       document.getElementById('menu-view').classList.add('active');
       
       const wChip = document.getElementById('wallet-chip');
-      if (wChip && currentUser.wallet_balance > 0) {
+      if (wChip && currentUser.wallet_balance !== undefined) {
           wChip.style.display = 'block';
           wChip.textContent = '💳 ₹' + currentUser.wallet_balance;
       }
