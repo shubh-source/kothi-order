@@ -1877,6 +1877,21 @@
           wChip.style.display = 'block';
           wChip.textContent = '💳 ₹' + currentUser.wallet_balance;
       }
+
+      // Fetch latest wallet balance from server in background
+      fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: currentUser.phone, name: currentUser.name })
+      })
+      .then(res => res.json())
+      .then(data => {
+          if (data.success && data.user) {
+              currentUser = data.user;
+              localStorage.setItem('currentUser', JSON.stringify(currentUser));
+              if (wChip) wChip.textContent = '💳 ₹' + currentUser.wallet_balance;
+          }
+      }).catch(e => console.log('Silently ignoring background sync error', e));
     }
 
     // Real-time bill syncing
