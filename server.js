@@ -343,6 +343,73 @@ app.get('/api/super-stats', authMiddleware, async (req, res) => {
     }
 });
 
+// Analytics Dashboard Endpoint
+app.get('/api/analytics', authMiddleware, async (req, res) => {
+    try {
+        // 1. Last 7 Days Revenue
+        const sevenDays = await allQuery(`
+            SELECT DATE(timestamp) as date, SUM(total_amount) as revenue, COUNT(*) as orders 
+            FROM orders 
+            WHERE payment_status = 'paid' AND timestamp >= CURRENT_DATE - INTERVAL '6 days'
+            GROUP BY DATE(timestamp) 
+            ORDER BY DATE(timestamp) ASC
+        `);
+
+        // 2. Peak Hours (grouped by hour of day)
+        const peakHours = await allQuery(`
+            SELECT EXTRACT(HOUR FROM timestamp) as hour, COUNT(*) as count 
+            FROM orders 
+            WHERE payment_status = 'paid'
+            GROUP BY EXTRACT(HOUR FROM timestamp)
+            ORDER BY EXTRACT(HOUR FROM timestamp) ASC
+        `);
+
+        // 3. VIP Customers
+        const vipUsers = await allQuery(`
+            SELECT name, phone, total_spent, total_orders 
+            FROM users 
+            WHERE total_spent > 0 
+            ORDER BY total_spent DESC 
+            LIMIT 5
+        `);
+
+        // 4. Top 5 Items (process in JS since items is TEXT containing JSON)
+        const allItemsRaw = await allQuery(`SELECT items FROM orders WHERE payment_status = 'paid'`);
+        const itemCounts = {};
+        for (const row of allItemsRaw) {
+            try {
+                const parsed = JSON.parse(row.items);
+                for (const entry of parsed) {
+                    // Structure is usually { item: { name: '...', price: ... }, qty: 1, size: '...' }
+                    const name = entry.item && entry.item.name ? entry.item.name : 'Unknown Item';
+                    const qty = entry.qty || 1;
+                    const price = entry.price || (entry.item ? entry.item.price : 0);
+                    
+                    if (!itemCounts[name]) itemCounts[name] = { qty: 0, revenue: 0 };
+                    itemCounts[name].qty += qty;
+                    itemCounts[name].revenue += (qty * price);
+                }
+            } catch(e) {}
+        }
+        
+        const topItems = Object.keys(itemCounts).map(k => ({
+            name: k, 
+            qty: itemCounts[k].qty, 
+            revenue: itemCounts[k].revenue
+        })).sort((a,b) => b.qty - a.qty).slice(0, 5);
+
+        res.json({
+            success: true,
+            sevenDays,
+            peakHours,
+            vipUsers,
+            topItems
+        });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
 async function freeTableIfNoActiveOrders(table_no) {
     // A table is active if there are any orders for this table that are NOT (served AND paid)
     const active = await allQuery(`

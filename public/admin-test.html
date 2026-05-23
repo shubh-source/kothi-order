@@ -316,7 +316,8 @@
                         label: 'Orders',
                         data: data.peakHours.map(d => d.count),
                         backgroundColor: '#d4aa55',
-                        borderRadius: 6
+                        borderRadius: 6,
+                        maxBarThickness: 40
                     }]
                 },
                 options: { responsive: true, plugins: { legend: {display: false} }, scales: { y: { beginAtZero: true } } }
