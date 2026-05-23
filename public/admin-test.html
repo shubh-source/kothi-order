@@ -184,6 +184,7 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start;">
             <div class="panel" style="margin-bottom: 0;">
                 <h2 style="font-size:18px;">Top 5 Best Selling Items</h2>
+                <div id="no-items-msg" style="display:none; padding:40px 0; text-align:center; color:#a09a93; font-size:14px; font-weight:500;">No items sold yet.</div>
                 <canvas id="itemsChart" height="200"></canvas>
             </div>
             <div class="panel" style="margin-bottom: 0;">
@@ -324,19 +325,26 @@
             });
 
             // 3. Top Items (Doughnut)
-            const itemsCtx = document.getElementById('itemsChart').getContext('2d');
-            chartsRendered['items'] = new Chart(itemsCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: data.topItems.map(d => d.name),
-                    datasets: [{
-                        data: data.topItems.map(d => d.qty),
-                        backgroundColor: ['#bc111e', '#d4aa55', '#22222a', '#e8e4df', '#64748b'],
-                        borderWidth: 2
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, cutout: '65%' }
-            });
+            if (data.topItems.length === 0) {
+                document.getElementById('itemsChart').style.display = 'none';
+                document.getElementById('no-items-msg').style.display = 'block';
+            } else {
+                document.getElementById('itemsChart').style.display = 'block';
+                document.getElementById('no-items-msg').style.display = 'none';
+                const itemsCtx = document.getElementById('itemsChart').getContext('2d');
+                chartsRendered['items'] = new Chart(itemsCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: data.topItems.map(d => d.name),
+                        datasets: [{
+                            data: data.topItems.map(d => d.qty),
+                            backgroundColor: ['#bc111e', '#d4aa55', '#22222a', '#e8e4df', '#64748b'],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, cutout: '65%' }
+                });
+            }
 
             // 4. VIP Users Table
             document.getElementById('vip-users-body').innerHTML = data.vipUsers.map((u, i) => 
