@@ -174,18 +174,24 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; align-items: start;">
             <div class="panel" style="margin-bottom: 0;">
                 <h2 style="font-size:18px;">Revenue (Last 7 Days)</h2>
-                <canvas id="revChart" height="200"></canvas>
+                <div style="position:relative; height:220px; width:100%;">
+                    <canvas id="revChart"></canvas>
+                </div>
             </div>
             <div class="panel" style="margin-bottom: 0;">
                 <h2 style="font-size:18px;">Peak Order Hours</h2>
-                <canvas id="peakChart" height="200"></canvas>
+                <div style="position:relative; height:220px; width:100%;">
+                    <canvas id="peakChart"></canvas>
+                </div>
             </div>
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start;">
             <div class="panel" style="margin-bottom: 0;">
                 <h2 style="font-size:18px;">Top 5 Best Selling Items</h2>
                 <div id="no-items-msg" style="display:none; padding:40px 0; text-align:center; color:#a09a93; font-size:14px; font-weight:500;">No items sold yet.</div>
-                <canvas id="itemsChart" height="200"></canvas>
+                <div id="itemsChartWrapper" style="position:relative; height:220px; width:100%;">
+                    <canvas id="itemsChart"></canvas>
+                </div>
             </div>
             <div class="panel" style="margin-bottom: 0;">
                 <h2 style="font-size:18px;">🏆 VIP Customers (Top Spenders)</h2>
@@ -326,10 +332,10 @@
 
             // 3. Top Items (Doughnut)
             if (data.topItems.length === 0) {
-                document.getElementById('itemsChart').style.display = 'none';
+                document.getElementById('itemsChartWrapper').style.display = 'none';
                 document.getElementById('no-items-msg').style.display = 'block';
             } else {
-                document.getElementById('itemsChart').style.display = 'block';
+                document.getElementById('itemsChartWrapper').style.display = 'block';
                 document.getElementById('no-items-msg').style.display = 'none';
                 const itemsCtx = document.getElementById('itemsChart').getContext('2d');
                 chartsRendered['items'] = new Chart(itemsCtx, {
