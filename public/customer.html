@@ -1666,8 +1666,55 @@
         // Ensure wUsed is a number
         wUsed = wUsed || 0;
 
-        document.getElementById('cart-modal').classList.remove('open');
+        // --- GPS VERIFICATION ON CHECKOUT ---
+        const RESTAURANT_LAT = 27.56275; 
+        const RESTAURANT_LNG = 80.68674;
+        const MAX_RADIUS = 100;
 
+        if (!navigator.geolocation) {
+            return alert("Geolocation is not supported. Cannot verify location.");
+        }
+
+        const btn = document.querySelector('.place-btn');
+        const oldText = btn.innerHTML;
+        btn.innerHTML = 'Verifying Location... 📍';
+        btn.disabled = true;
+
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                const distance = getDistanceFromLatLonInM(RESTAURANT_LAT, RESTAURANT_LNG, position.coords.latitude, position.coords.longitude);
+                if (distance > MAX_RADIUS) {
+                    btn.innerHTML = oldText;
+                    btn.disabled = false;
+                    return alert(`You are ${Math.round(distance)} meters away. You must be inside the restaurant to place an order!`);
+                }
+                
+                // If within radius, continue with order placement
+                document.getElementById('cart-modal').classList.remove('open');
+                proceedWithOrder(tot, cb, wUsed, oldText, btn);
+            },
+            (error) => {
+                btn.innerHTML = oldText;
+                btn.disabled = false;
+                if (error.code === error.PERMISSION_DENIED) {
+                    alert("Location permission is required to order. Please enable it in your browser settings.");
+                } else {
+                    alert("Unable to verify your location. Please try again.");
+                }
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+      }
+
+      function getDistanceFromLatLonInM(lat1, lon1, lat2, lon2) {
+          var R = 6371; 
+          var dLat = (lat2-lat1) * (Math.PI/180);  
+          var dLon = (lon2-lon1) * (Math.PI/180); 
+          var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * (Math.PI/180)) * Math.cos(lat2 * (Math.PI/180)) * Math.sin(dLon/2) * Math.sin(dLon/2); 
+          return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) * 1000;
+      }
+
+      async function proceedWithOrder(tot, cb, wUsed, oldBtnText, btn) {
         try {
           const itemsArray = Object.values(cart).filter(e => e.qty > 0);
           const orderId = 'ORD-' + Math.floor(Math.random() * 10000) + '-' + Date.now().toString().slice(-4);
@@ -1771,6 +1818,7 @@
 
         } catch (e) {
           alert('Error placing order: ' + e.message);
+          if (btn) { btn.innerHTML = oldBtnText; btn.disabled = false; }
         }
       }
 

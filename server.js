@@ -279,17 +279,27 @@ app.patch('/api/orders/:id/payment', authMiddleware, async (req, res) => {
         await runQuery('UPDATE orders SET payment_status = ? WHERE id = ?', [payment_status, id]);
 
         const updated = await allQuery('SELECT * FROM orders WHERE id = ?', [id]);
-        io.emit('order_update', { action: 'payment_change', order: updated[0] });
+        const order = updated[0];
+
+        // Give cashback if this is marked 'paid' and it was a card or online method
+        // Note: we should avoid double-giving cashback. Since pending->paid happens only once, this is generally safe.
+        if (payment_status === 'paid' && (order.payment_method === 'card_counter' || order.payment_method === 'online')) {
+            const cbEarned = Math.floor(order.total_amount * 0.05);
+            if (cbEarned > 0) {
+                await runQuery(`UPDATE users SET wallet_balance = wallet_balance + ? WHERE phone = ?`, [cbEarned, order.phone]);
+            }
+        }
+
+        io.emit('order_update', { action: 'payment_change', order });
 
         // If paid and already served, free table
         if (payment_status === 'paid') {
-            const order = updated[0];
             if (order.order_status === 'served') {
                 freeTableIfNoActiveOrders(order.table_no);
             }
         }
 
-        res.json({ success: true, order: updated[0] });
+        res.json({ success: true, order });
     } catch (e) {
         res.status(500).json({ error: e.message });
     }
@@ -328,8 +338,13 @@ app.post('/api/pay/verify', async (req, res) => {
 
         const updated = await allQuery('SELECT * FROM orders WHERE id = ?', [local_order_id]);
         if (updated.length > 0) {
-            io.emit('order_update', { type: 'payment', order: updated[0] });
-            res.json({ success: true, order: updated[0] });
+            const order = updated[0];
+            const cbEarned = Math.floor(order.total_amount * 0.05);
+            if (cbEarned > 0) {
+                await runQuery(`UPDATE users SET wallet_balance = wallet_balance + ? WHERE phone = ?`, [cbEarned, order.phone]);
+            }
+            io.emit('order_update', { type: 'payment', order });
+            res.json({ success: true, order });
         } else {
             res.json({ success: true, msg: 'Order sync delayed' });
         }
