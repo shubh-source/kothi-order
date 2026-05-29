@@ -971,15 +971,450 @@
       font-weight: 700;
       cursor: pointer;
     }
+
+    /* ================= MENU CARD STYLES ================= */
+    .menu-body { padding: 20px 14px 140px; }
+    
+    /* Mandap Header */
+    .sec-title {
+      display: block !important;
+      text-align: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 24px !important;
+      color: #bc111e !important;
+      margin: 40px 0 20px !important;
+      padding: 12px 0 !important;
+      position: relative;
+      background: transparent !important;
+      border-top: 2px solid #d4aa55 !important;
+      border-bottom: 2px solid #d4aa55 !important;
+    }
+    .sec-title::before {
+      content: '❖';
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg);
+      padding: 0 10px;
+      color: #d4aa55;
+      font-size: 18px;
+    }
+    .sec-title::after {
+      content: '❖';
+      position: absolute;
+      bottom: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg);
+      padding: 0 10px;
+      color: #d4aa55;
+      font-size: 18px;
+      height: auto !important;
+    }
+
+    /* Dotted Leader Line Items */
+    .menu-item {
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      padding: 8px 0 !important;
+      margin-bottom: 6px !important;
+      display: flex !important;
+      align-items: flex-end !important;
+      justify-content: space-between !important;
+    }
+    .menu-item:hover {
+      transform: none !important;
+      box-shadow: none !important;
+    }
+    .mi-left {
+      display: flex !important;
+      flex: 1 !important;
+      align-items: flex-end !important;
+    }
+    .mi-name {
+      font-size: 16px !important;
+      font-family: 'Playfair Display', serif;
+      font-weight: 700 !important;
+      color: #2c1e16 !important;
+      white-space: nowrap;
+      margin-bottom: 2px;
+    }
+    .dotted-leader {
+      flex: 1;
+      border-bottom: 2px dotted #d4cfc8;
+      margin: 0 8px 6px 8px;
+    }
+    .mi-price-line {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700 !important;
+      font-size: 15px !important;
+      color: #bc111e !important;
+      margin-bottom: 2px;
+    }
+    .mi-tag { font-weight: normal; font-size: 10px !important; margin-left: 4px; }
+
+    /* Minimal Add Buttons */
+    .mi-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 12px;
+      margin-bottom: 2px;
+    }
+    .add-btn {
+      background: transparent !important;
+      color: #bc111e !important;
+      border: 1px solid #bc111e !important;
+      border-radius: 4px !important;
+      padding: 3px 8px !important;
+      font-size: 11px !important;
+      font-weight: 800 !important;
+      letter-spacing: 0.5px;
+    }
+    .add-btn.added {
+      background: #bc111e !important;
+      color: white !important;
+    }
+    .qty-badge {
+      background: #bc111e !important;
+      color: white !important;
+      border-radius: 4px !important;
+      padding: 2px 6px !important;
+      font-size: 12px !important;
+      min-width: 20px;
+      text-align: center;
+      display: none;
+    }
+    .qty-badge.show { display: block !important; }
+
+    /* Elegant Hero Blending */
+    .hero {
+      background: transparent !important;
+      box-shadow: none !important;
+      border-bottom: none !important;
+      padding-top: 10px !important;
+    }
+    .hero-top {
+      background: transparent !important;
+      box-shadow: none !important;
+      justify-content: center !important;
+      flex-direction: column !important;
+      gap: 15px !important;
+      border-bottom: 2px solid #e8e4df;
+      padding-bottom: 20px !important;
+      margin-bottom: 10px !important;
+    }
+    .rest-logo {
+      flex-direction: column !important;
+      text-align: center !important;
+    }
+    .rest-logo img {
+      width: 70px !important;
+      height: 70px !important;
+      margin: 0 auto 10px !important;
+    }
+    .rest-name {
+      font-size: 22px !important;
+      font-family: 'Playfair Display', serif !important;
+    }
+    .search-row { padding: 0 14px !important; }
+    .search-bar { background: rgba(0,0,0,0.03) !important; border: 1px solid rgba(0,0,0,0.05) !important; }
+    .cb-strip { display: none !important; } /* Hide cashback strip for elegant look */
+    
+    /* Ensure dotted leader expands properly */
+    .dotted-leader {
+      flex: 1 1 auto;
+      min-width: 20px;
+      border-bottom: 2px dotted #d4cfc8;
+      margin: 0 8px 6px 8px;
+    }
+    
+    /* Make add button look like price */
+    .add-btn {
+      padding: 4px 12px !important;
+      font-size: 14px !important;
+      border-radius: 6px !important;
+    }
+
+    /* Gumbad Mandap Category Styling */
+    .sec-title { display: none !important; }
+    .mandap-category {
+      text-align: center;
+      margin: 50px auto 20px;
+      position: relative;
+      max-width: 320px;
+    }
+    .mandap-gumbad {
+      position: relative;
+      height: 40px;
+      margin-bottom: -15px;
+      z-index: 1;
+    }
+    .gumbad-dome {
+      width: 140px;
+      height: 40px;
+      margin: 0 auto;
+      border: 2px solid #d4aa55;
+      border-bottom: none;
+      border-top-left-radius: 80px;
+      border-top-right-radius: 80px;
+      position: relative;
+    }
+    .gumbad-dome::before {
+      content: '❖';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #bc111e;
+      font-size: 14px;
+      background: var(--bg);
+      padding: 0 4px;
+    }
+    .gumbad-line {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #d4aa55;
+      z-index: -1;
+    }
+    .mandap-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: #bc111e;
+      background: var(--bg);
+      padding: 0 15px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ================= PAGE TOP GUMBAD (ARCH CARD SHAPE) ================= */
+    body {
+      background: #2b1a10 !important; /* Dark wood background so the cream card stands out */
+    }
+    
+    #menu-view, #login-view {
+      background: #fdfaf5 !important;
+      max-width: 600px;
+      margin: 30px auto 0 !important;
+      border-top-left-radius: 120px;
+      border-top-right-radius: 120px;
+      border: 3px solid #d4aa55;
+      border-bottom: none;
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+      position: relative;
+      overflow: hidden;
+      min-height: calc(100vh - 30px);
+    }
+    
+    /* Double border effect for the card */
+    #menu-view::before, #login-view::before {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      right: 8px;
+      bottom: 0;
+      border: 1px solid #d4aa55;
+      border-top-left-radius: 110px;
+      border-top-right-radius: 110px;
+      border-bottom: none;
+      pointer-events: none;
+      z-index: 10;
+    }
+    
+    /* Push content down so it doesn't hit the curved border */
+    .hero {
+      padding-top: 40px !important;
+    }
+
+    /* ================= HEADER GUMBAD DESIGN ================= */
+    .hero-top {
+      background: #fdfaf5 !important;
+      position: relative;
+      margin: 40px 14px 30px !important;
+      padding: 50px 20px 20px !important;
+      border: 2px solid #d4aa55;
+      border-bottom: 4px solid #bc111e !important;
+      border-top-left-radius: 160px !important;
+      border-top-right-radius: 160px !important;
+      box-shadow: 0 8px 25px rgba(188,17,30,0.05) !important;
+    }
+    
+    .hero-top::before {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      right: 8px;
+      bottom: 8px;
+      border: 1px dashed #d4aa55;
+      border-top-left-radius: 150px;
+      border-top-right-radius: 150px;
+      pointer-events: none;
+    }
+
+    .hero-top::after {
+      content: '❖';
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #bc111e;
+      font-size: 20px;
+      background: var(--bg);
+      padding: 0 10px;
+    }
+    
+    /* Make sure the logo sits nicely inside the dome */
+    .rest-logo {
+      margin-top: 10px !important;
+    }
+    
+    /* Also style the search bar slightly so it matches */
+    .search-row {
+      margin: 0 14px 20px !important;
+    }
+    .search-bar {
+      border: 1px solid #d4aa55 !important;
+      border-radius: 20px !important;
+      background: white !important;
+    }
+
+    /* ================= HEADER ALIGNMENT FIXES ================= */
+    .rest-logo {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      text-align: center !important;
+      width: 100%;
+    }
+    .rest-logo > div {
+      text-align: center !important;
+      width: 100%;
+    }
+    .rest-name {
+      text-align: center !important;
+      margin-top: 5px;
+    }
+    .rest-sub {
+      text-align: center !important;
+    }
+    
+    /* Make the white logo background blend smoothly into the cream card! */
+    .rest-logo img {
+      mix-blend-mode: multiply !important;
+      margin-bottom: 5px !important;
+    }
+
+    /* Center the wallet, bills, and table chips */
+    .hero-top > div:nth-child(2) {
+      justify-content: center !important;
+      margin-top: 15px;
+      width: 100%;
+    }
+    
+    /* Ensure the search bar is centered */
+    .search-row {
+      display: flex;
+      justify-content: center;
+    }
+
+    /* ================= REDUCE HEADER SPACING ================= */
+    .hero-top {
+      margin: 30px 14px 15px !important;
+      padding: 35px 15px 15px !important;
+      gap: 5px !important;
+    }
+    
+    .rest-logo img {
+      margin-bottom: 2px !important;
+      width: 100px !important;
+      height: 100px !important;
+    }
+    
+    .rest-name {
+      margin-top: 2px !important;
+      font-size: 20px !important;
+    }
+    
+    /* Chips container */
+    .hero-top > div:nth-child(2) {
+      margin-top: 8px !important;
+    }
+    
+    /* Search row */
+    .search-row {
+      margin: 0 14px 10px !important;
+    }
+    
+    /* Reduce spacing for Categories as well just in case */
+    .mandap-category {
+      margin: 30px auto 10px !important;
+    }
+
+    /* ================= FINAL HEADER SPACING FIXES ================= */
+    .hero-top {
+      padding: 20px 15px 15px !important; /* Reduced top padding */
+    }
+    
+    .rest-logo img {
+      width: 120px !important;
+      height: 120px !important;
+      margin-top: -15px !important; /* Pull up towards the top arch */
+      margin-bottom: -20px !important; /* Pull KOTHI text up towards the logo */
+    }
+    
+    .rest-name {
+      margin-top: 0 !important;
+      z-index: 2; /* just in case the logo overlaps it */
+      position: relative;
+    }
+
+    /* ================= CASCADING ANIMATION V2 ================= */
+    @keyframes cascadeDown {
+      0% { 
+        opacity: 0; 
+        transform: translateY(-80px) scale(0.95); 
+      }
+      50% {
+        opacity: 1;
+      }
+      100% { 
+        opacity: 1; 
+        transform: translateY(0) scale(1); 
+      }
+    }
+    
+    .cascade-animate {
+      opacity: 0;
+      /* Much slower duration for smooth majestic glide */
+      animation: cascadeDown 1.0s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    /* ================= FIX OVERLAPPING MODALS ================= */
+    .modal-overlay {
+      z-index: 2000 !important; /* Must be higher than the 1000 z-index of animations */
+    }
+    
+    .cart-bar {
+      z-index: 1500 !important; /* Must be higher than animations */
+    }
   </style>
 </head>
 
 <body>
   <div id="login-view" class="view active">
     <div class="login-box">
-      <img src="logo.jpg" alt="Rajasthani Sweets Logo"
+      <img src="logo.png" alt="Rajasthani Sweets Logo"
         style="width: 200px; margin: 0 auto 24px; display: block; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-      <h1 style="font-family: 'Playfair Display', serif; margin-bottom: 5px;">Rajasthani Sweets</h1>
+      <h1 style="font-family: 'Playfair Display', serif; margin-bottom: 5px;">KOTHI</h1>
       <p style="color: var(--text3); font-size: 13px; margin-bottom: 30px;">Welcome! Please enter your details.</p>
 
       <div class="input-group">
@@ -1001,13 +1436,14 @@
     <div class="hero">
       <div class="hero-top">
         <div class="rest-logo">
-          <img src="logo.jpg" alt="Logo" style="height: 52px; object-fit: contain; border-radius: 8px;">
+          <img class="cascade-animate" src="logo.png" alt="Logo" style="height: 52px; object-fit: contain; border-radius: 8px; animation-delay: 0.12s; z-index: 1010; position: relative;">
           <div>
-            <div class="rest-name">Rajasthani Sweets &amp; Cafe</div>
-            <div class="rest-sub">Tompson Ganj, Sitapur &nbsp;·&nbsp; Open till 10:30 PM</div>
+            <div class="rest-name cascade-animate" style="font-size: 34px !important; margin-bottom: -2px; letter-spacing: 2px; animation-delay: 0.24s; z-index: 1009; position: relative;">KOTHI</div>
+            <div class="rest-tagline cascade-animate" style="font-family: 'Playfair Display', serif; font-size: 16px; color: #bc111e; margin-bottom: 5px; font-weight: 600; animation-delay: 0.36s; z-index: 1008; position: relative;">A Grand Highway Dhaba</div>
+            <div class="rest-sub cascade-animate" style="animation-delay: 0.48s; z-index: 1007; position: relative;">NH-24, Kamlapur &nbsp;·&nbsp; Open 24 Hours</div>
           </div>
         </div>
-        <div style="display:flex; gap: 8px; align-items:center;">
+        <div class="cascade-animate" style="display:flex; gap: 8px; align-items:center; animation-delay: 0.60s; z-index: 1006; position: relative;">
           <div class="table-chip" id="wallet-chip" style="cursor:pointer; background:var(--gold-bg); border-color:var(--gold-border); color:#b5852a; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: background 0.2s; font-weight: 700;">
             💳 ₹0</div>
           <div class="table-chip" id="history-chip" onclick="openHistory()"
@@ -1019,7 +1455,7 @@
       <div class="cb-strip">
         <span>🎁</span> 5% cashback on UPI &amp; Card payments
       </div>
-      <div class="search-row">
+      <div class="search-row cascade-animate" style="animation-delay: 0.72s; z-index: 1005; position: relative;">
         <input class="search-bar" type="text" placeholder="🔍  Search dishes..." id="search-inp"
           oninput="onSearch(this.value)" />
         <button class="filter-btn" id="filter-btn" onclick="openFilter()">☰ Filter</button>
@@ -1412,6 +1848,7 @@
 
       // ── RENDER MENU ──────────────────────────────────────────────
       function renderMenu() {
+        var delayIndex = 7;
         var q = searchQ.toLowerCase();
         var body = document.getElementById('menu-body');
         var grouped = {};
@@ -1425,20 +1862,26 @@
         if (!keys.length) { body.innerHTML = '<div class="empty-msg">No dishes found 🍽️</div>'; return; }
         var html = '';
         keys.forEach(function (cat) {
-          html += '<div class="sec-title">' + cat + '</div>';
+          html += '<div class="mandap-category cascade-animate" style="animation-delay: ' + (delayIndex * 0.12) + 's; z-index: ' + (1000 - delayIndex) + '; position: relative;">' +
+            '<div class="mandap-gumbad">' +
+            '<div class="gumbad-dome"></div>' +
+            '<div class="gumbad-line"></div>' +
+            '</div>' +
+            '<span class="mandap-text">' + cat + '</span>' +
+            '</div>';
+          delayIndex++;
           grouped[cat].forEach(function (m) {
             var totalQ = getTotalQty(m.id);
             var priceTag = '₹' + m.price;
-            if (m.hasHalf) priceTag += ' <span class="mi-tag">Half avail.</span>';
-            if (m.isPizza) priceTag += ' <span class="mi-tag">Sm / Med / Lg</span>';
-            html += '<div class="menu-item" onclick="openDish(' + m.id + ')">' +
-              '<div class="mi-left">' +
-              '<div class="mi-name"><span class="vdot"></span>' + m.name + '</div>' +
-              '<div class="mi-price-line">' + priceTag + '</div>' +
+            var btnLabel = (totalQ > 0) ? '✓' : priceTag;
+            html += '<div class="menu-item cascade-animate" style="animation-delay: ' + (delayIndex * 0.12) + 's; z-index: ' + (1000 - delayIndex) + '; position: relative;" onclick="openDish(' + m.id + ')">' +
+              '<div class="mi-left" style="width: 100%;">' +
+              '<div class="mi-name">' + m.name + '</div>' +
+              '<div class="dotted-leader"></div>' +
               '</div>' +
               '<div class="mi-right">' +
               '<div class="qty-badge' + (totalQ > 0 ? ' show' : '') + '" id="b' + m.id + '">' + totalQ + '</div>' +
-              '<div class="add-btn' + (totalQ > 0 ? ' added' : '') + '">' + (totalQ > 0 ? 'Added' : 'Add') + '</div>' +
+              '<div class="add-btn' + (totalQ > 0 ? ' added' : '') + '">' + btnLabel + '</div>' +
               '</div>' +
               '</div>';
           });
@@ -1667,8 +2110,8 @@
         wUsed = wUsed || 0;
 
         // --- GPS VERIFICATION ON CHECKOUT ---
-        const RESTAURANT_LAT = 27.56275; 
-        const RESTAURANT_LNG = 80.68674;
+        const RESTAURANT_LAT = 27.4026314; 
+        const RESTAURANT_LNG = 80.8147694;
         const MAX_RADIUS = 100;
 
         if (!navigator.geolocation) {
@@ -1777,7 +2220,7 @@
               key: rzpKeyId, // Dynamic backend key
               amount: tot * 100,
               currency: "INR",
-              name: "Rajasthani Sweets",
+              name: "KOTHI - A Grand Highway Dhaba",
               description: "Order #" + oid,
               order_id: rzpData.order.id,
               handler: async function (response) {
@@ -1916,7 +2359,9 @@
 
     const socket = io();
 
-    if (currentUser) {
+    if (!currentUser) {
+      window.location.href = '/welcome-customer.html' + window.location.search;
+    } else {
       document.getElementById('login-view').classList.remove('active');
       document.getElementById('menu-view').classList.add('active');
       
