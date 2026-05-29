@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Welcome | Rajasthani Sweets & Cafe</title>
+    <title>Welcome | KOTHI - A Grand Highway Dhaba</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -13,92 +13,130 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            background: #faf8f5;
+            justify-content: flex-end;
+            background: #2a1f1a;
             font-family: 'Inter', sans-serif;
             overflow: hidden;
             position: relative;
         }
 
-        /* Animated Background */
-        .bg-pattern {
-            position: fixed;
-            inset: 0;
-            background-image: 
-                radial-gradient(circle at 20% 50%, rgba(188,17,30,0.06) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(218,165,32,0.08) 0%, transparent 50%),
-                radial-gradient(circle at 50% 80%, rgba(188,17,30,0.04) 0%, transparent 50%);
-        }
+        .bg-pattern { display: none; }
 
-        /* Main Container */
+        /* Mandap Container */
         .welcome-container {
             position: relative;
             z-index: 1;
             text-align: center;
-            padding: 40px 24px;
-            max-width: 420px;
+            padding: 70px 30px 60px;
+            max-width: 540px;
             width: 100%;
+            background: #faf8f5;
+            border-radius: 60px 60px 0 0;
+            box-shadow: 0 -4px 30px rgba(0,0,0,0.4);
+            border-top: 3px solid #d4aa55;
+            border-left: 1px solid #e8cc92;
+            border-right: 1px solid #e8cc92;
         }
 
-        /* View Management */
-        .step-view {
-            display: none;
-            animation: fadeInUp 0.6s ease-out;
-        }
-        .step-view.active {
-            display: block;
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Logo */
-        .logo-wrapper {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 28px;
-            border-radius: 28px;
-            overflow: hidden;
-            box-shadow: 0 12px 40px rgba(188,17,30,0.15), 0 4px 12px rgba(0,0,0,0.08);
-            border: 3px solid rgba(218,165,32,0.3);
-        }
-        .logo-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-        .logo-wrapper.small { width: 90px; height: 90px; margin-bottom: 20px; }
-
-        /* Typography */
-        .brand-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 30px;
-            font-weight: 800;
-            color: #1a1a1a;
-            margin-bottom: 6px;
-        }
-        .brand-tagline {
+        .welcome-container::before {
+            content: "❖";
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #bc111e;
             font-size: 14px;
-            color: #6b6560;
-            font-weight: 500;
-            margin-bottom: 36px;
+        }
+
+        .welcome-container::after {
+            content: "";
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 0;
+            border-radius: 52px 52px 0 0;
+            border: 1px solid #e8cc92;
+            pointer-events: none;
+            z-index: 0;
         }
         
-        .welcome-text {
-            font-family: 'Playfair Display', serif;
-            font-size: 26px;
-            font-weight: 700;
-            color: #bc111e;
-            margin-bottom: 12px;
+        /* Container slide-up from bottom */
+        /* Container slides up from bottom on load */
+        @keyframes slideUp {
+            from { transform: translateY(60px); opacity: 0; }
+            to   { transform: translateY(0);    opacity: 1; }
+        }
+        .welcome-container {
+            animation: slideUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
         }
 
-        /* Inputs */
-        .input-group {
-            margin-bottom: 24px;
-            text-align: left;
+        /* Individual element fade-up */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(25px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
+
+        /* All cascade items hidden by default */
+        .cascade-item {
+            opacity: 0;
+        }
+        /* When step is active, animate each cascade-item in */
+        .step-view.active .cascade-item {
+            animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        .step-view {
+            position: relative;
+            z-index: 10;
+            display: none;
+            width: 100%;
+        }
+        .step-view.active { display: flex; flex-direction: column; align-items: center; }
+
+        /* Stacked Header */
+        .logo-wrapper {
+            margin: 0 auto 10px;
+            position: relative;
+            z-index: 10;
+        }
+        .logo-wrapper img { 
+            width: 140px; 
+            height: 140px; 
+            object-fit: contain; 
+            mix-blend-mode: multiply; /* Removes the white box! */
+        }
+        
+        .brand-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 40px;
+            font-weight: 800;
+            color: #1a1a1a;
+            margin-bottom: 0px;
+            letter-spacing: 2px;
+        }
+        
+        .brand-tagline {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            color: #bc111e;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .rest-sub {
+            font-size: 13px;
+            color: #6b6560;
+            margin-bottom: 40px;
+            font-weight: 500;
+        }
+
+        /* Input Groups */
+        .input-group { margin-bottom: 24px; text-align: left; width: 100%; }
         .input-group label {
             display: block;
             font-size: 12px;
-            color: #8a857f;
+            color: #2a1f1a;
             margin-bottom: 8px;
             font-weight: 600;
             text-transform: uppercase;
@@ -107,31 +145,27 @@
         .input-group input {
             width: 100%;
             padding: 16px;
-            border: 1px solid #e0dbd5;
+            border: 1px solid #e8cc92;
             background: #fff;
             border-radius: 12px;
             font-size: 16px;
             font-family: 'Inter', sans-serif;
             transition: all 0.3s ease;
             outline: none;
+            box-shadow: 0 2px 8px rgba(218,165,32,0.05);
         }
         .input-group input:focus {
             border-color: #bc111e;
             box-shadow: 0 0 0 3px rgba(188,17,30,0.1);
         }
-        .error-text {
-            color: #bc111e;
-            font-size: 12px;
-            margin-top: 8px;
-            display: none;
-        }
+        .error-text { color: #bc111e; font-size: 12px; margin-top: 8px; display: none; }
 
-        /* CTA Button */
+        /* Button */
         .cta-btn {
             display: block;
             width: 100%;
             padding: 18px 32px;
-            background: linear-gradient(135deg, #bc111e 0%, #8b0d16 100%);
+            background: #bc111e;
             color: white;
             border: none;
             border-radius: 16px;
@@ -139,71 +173,22 @@
             font-weight: 700;
             font-family: 'Inter', sans-serif;
             cursor: pointer;
-            box-shadow: 0 8px 24px rgba(188,17,30,0.3);
+            box-shadow: 0 8px 24px rgba(188,17,30,0.25);
             transition: all 0.3s ease;
         }
-        .cta-btn:active { transform: scale(0.97); }
+        .cta-btn:hover { background: #9a0914; }
         .cta-btn:disabled { opacity: 0.7; cursor: not-allowed; }
 
-        /* Loader */
         .loader {
             display: inline-block;
-            width: 20px;
-            height: 20px;
+            width: 20px; height: 20px;
             border: 3px solid rgba(255,255,255,0.3);
             border-radius: 50%;
-            border-top-color: #fff;
+            border-top-color: white;
             animation: spin 1s ease-in-out infinite;
             display: none;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* Fade out for body before redirect */
-        body.fade-out {
-            animation: fadeOutBody 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-        @keyframes fadeOutBody {
-            from { opacity: 1; filter: blur(0px); transform: scale(1); }
-            to { opacity: 0; filter: blur(4px); transform: scale(0.98); }
-        }
-
-        /* Success Animation */
-        .success-checkmark {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 20px;
-            background: #22c55e;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 40px;
-            box-shadow: 0 8px 24px rgba(34,197,94,0.3);
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes popIn {
-            0% { transform: scale(0); }
-            100% { transform: scale(1); }
-        }
-
-        .redirecting-text {
-            font-size: 13px;
-            color: #8a857f;
-            margin-top: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .dot-flashing {
-            width: 6px; height: 6px; border-radius: 50%; background-color: #bc111e;
-            animation: dotFlashing 1s infinite linear alternate;
-        }
-        @keyframes dotFlashing {
-            0% { opacity: 1; }
-            50%, 100% { opacity: 0.2; }
-        }
     </style>
 </head>
 <body>
@@ -213,14 +198,15 @@
         
         <!-- STEP 1: Main Welcome -->
         <div id="step-1" class="step-view active">
-            <div class="logo-wrapper">
-                <img src="logo.jpg" alt="Rajasthani Sweets & Cafe">
+            <div class="logo-wrapper cascade-item" style="animation-delay: 0.7s;">
+                <img src="logo.png" alt="KOTHI - A Grand Highway Dhaba">
             </div>
-            <div class="brand-name">Rajasthani Sweets</div>
-            <div class="brand-tagline">TOMPSON GANJ, Sitapur</div>
-            <div class="welcome-text" style="margin-bottom: 40px;">Welcomes You! 🙏</div>
+            <div class="brand-name cascade-item" style="animation-delay: 1.0s;">KOTHI</div>
+            <div class="brand-tagline cascade-item" style="animation-delay: 1.2s;">A Grand Highway Dhaba</div>
+            <div class="rest-sub cascade-item" style="animation-delay: 1.4s;">NH-24, Kamlapur &nbsp;·&nbsp; Open 24 Hours</div>
+            <div class="welcome-text cascade-item" style="animation-delay: 1.6s; margin-bottom: 40px;">Welcomes You! 🙏</div>
             
-            <button id="btn-start" class="cta-btn" onclick="validateLocation()">
+            <button id="btn-start" class="cta-btn cascade-item" style="animation-delay: 1.9s;" onclick="validateLocation()">
                 <span class="btn-text">Get Started →</span>
                 <span class="loader"></span>
             </button>
@@ -229,19 +215,19 @@
 
         <!-- STEP 2: Enter Phone -->
         <div id="step-2" class="step-view">
-            <div class="logo-wrapper small">
-                <img src="logo.jpg" alt="Logo">
+            <div class="logo-wrapper small cascade-item" style="animation-delay: 0.1s;">
+                <img src="logo.png" alt="Logo">
             </div>
-            <div class="welcome-text" style="font-size: 22px;">Enter Your Details</div>
-            <div class="brand-tagline">Please provide your mobile number to continue.</div>
+            <div class="welcome-text cascade-item" style="font-size: 22px; animation-delay: 0.3s;">Enter Your Details</div>
+            <div class="brand-tagline cascade-item" style="animation-delay: 0.5s;">Please provide your mobile number to continue.</div>
 
-            <div class="input-group">
+            <div class="input-group cascade-item" style="animation-delay: 0.7s;">
                 <label>Mobile Number</label>
                 <input type="tel" id="user-phone" placeholder="10-digit mobile number" maxlength="10">
                 <div id="phone-err" class="error-text">Please enter a valid 10-digit number.</div>
             </div>
 
-            <button id="btn-phone" class="cta-btn" onclick="checkUser()">
+            <button id="btn-phone" class="cta-btn cascade-item" style="animation-delay: 0.9s;" onclick="checkUser()">
                 <span class="btn-text">Continue</span>
                 <span class="loader"></span>
             </button>
@@ -249,19 +235,19 @@
 
         <!-- STEP 3: Enter Name (New User Only) -->
         <div id="step-3" class="step-view">
-            <div class="logo-wrapper small">
-                <img src="logo.jpg" alt="Logo">
+            <div class="logo-wrapper small cascade-item" style="animation-delay: 0.1s;">
+                <img src="logo.png" alt="Logo">
             </div>
-            <div class="welcome-text" style="font-size: 22px;">Nice to meet you!</div>
-            <div class="brand-tagline">What should we call you?</div>
+            <div class="welcome-text cascade-item" style="font-size: 22px; animation-delay: 0.3s;">Nice to meet you!</div>
+            <div class="brand-tagline cascade-item" style="animation-delay: 0.5s;">What should we call you?</div>
 
-            <div class="input-group">
+            <div class="input-group cascade-item" style="animation-delay: 0.7s;">
                 <label>Full Name</label>
                 <input type="text" id="user-name" placeholder="E.g. Shubh Katiyar">
                 <div id="name-err" class="error-text">Please enter your name.</div>
             </div>
 
-            <button id="btn-name" class="cta-btn" onclick="registerUser()">
+            <button id="btn-name" class="cta-btn cascade-item" style="animation-delay: 0.9s;" onclick="registerUser()">
                 <span class="btn-text">Submit Details</span>
                 <span class="loader"></span>
             </button>
@@ -269,11 +255,11 @@
 
         <!-- STEP 4: Success Greeting -->
         <div id="step-4" class="step-view">
-            <div class="success-checkmark">✓</div>
-            <div class="welcome-text" id="greeting-text">Welcome, Mr. Shubh!</div>
-            <div class="brand-tagline" style="margin-bottom: 20px;">We're glad to have you here.</div>
+            <div class="success-checkmark cascade-item" style="animation-delay: 0.1s;">✓</div>
+            <div class="welcome-text cascade-item" id="greeting-text" style="animation-delay: 0.3s;">Welcome, Mr. Shubh!</div>
+            <div class="brand-tagline cascade-item" style="margin-bottom: 20px; animation-delay: 0.5s;">We're glad to have you here.</div>
             
-            <div class="redirecting-text">
+            <div class="redirecting-text cascade-item" style="animation-delay: 0.7s;">
                 Taking you to the menu <div class="dot-flashing"></div>
             </div>
         </div>
@@ -281,9 +267,12 @@
     </div>
 
     <script>
+        // Always start fresh on every QR scan
+        localStorage.removeItem('currentUser');
+
         // --- GPS CONFIGURATION ---
-        const RESTAURANT_LAT = 27.56275;
-        const RESTAURANT_LNG = 80.68674;
+        const RESTAURANT_LAT = 27.4026314;
+        const RESTAURANT_LNG = 80.8147694;
         const MAX_RADIUS_METERS = 100;  // Maximum allowed distance in meters
 
         let currentPhone = '';
@@ -305,48 +294,22 @@
         function deg2rad(deg) { return deg * (Math.PI/180); }
 
         function validateLocation() {
-            const errDiv = document.getElementById('gps-err');
-            errDiv.style.display = 'none';
-
-            if (!navigator.geolocation) {
-                errDiv.innerText = "Geolocation is not supported by your browser.";
-                errDiv.style.display = 'block';
-                return;
-            }
-
+            // NOTE: GPS Validation is temporarily disabled for testing!
+            // When you are ready for production, you can re-enable this.
             toggleLoading('btn-start', true);
-
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const userLat = position.coords.latitude;
-                    const userLng = position.coords.longitude;
-                    const distance = getDistanceFromLatLonInM(RESTAURANT_LAT, RESTAURANT_LNG, userLat, userLng);
-
-                    if (distance <= MAX_RADIUS_METERS) {
-                        toggleLoading('btn-start', false);
-                        nextStep(2); // Proceed to phone number entry
-                    } else {
-                        toggleLoading('btn-start', false);
-                        errDiv.innerText = `You are ${Math.round(distance)} meters away. You must be inside the restaurant to order!`;
-                        errDiv.style.display = 'block';
-                    }
-                },
-                (error) => {
-                    toggleLoading('btn-start', false);
-                    if (error.code === error.PERMISSION_DENIED) {
-                        errDiv.innerText = "Location permission is required to order. Please enable it in your browser settings.";
-                    } else {
-                        errDiv.innerText = "Unable to get your location. Please try again.";
-                    }
-                    errDiv.style.display = 'block';
-                },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-            );
+            
+            setTimeout(() => {
+                toggleLoading('btn-start', false);
+                nextStep(2); // Proceed to phone number entry directly
+            }, 500); // Small fake delay to simulate loading
         }
 
         function nextStep(step) {
             document.querySelectorAll('.step-view').forEach(el => el.classList.remove('active'));
-            document.getElementById('step-' + step).classList.add('active');
+            const nextEl = document.getElementById('step-' + step);
+            // Force reflow so CSS animation re-triggers
+            nextEl.offsetHeight;
+            nextEl.classList.add('active');
         }
 
         function toggleLoading(btnId, isLoading) {
